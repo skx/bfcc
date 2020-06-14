@@ -4,8 +4,30 @@ The aim of this repository is to contain a BrainFuck compiler, written in Golang
 
 [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) is an esoteric programming language created in 1993 by Urban Müller, and is notable for its extreme minimalism.  It supports only a few instructions, and is practically unreadable.
 
-That said brainfuck, despite the name, as a good history in the programming world as being something simple and well-defined to play with.
+That said brainfuck, despite the name, has a good history in the programming world as being something simple and well-defined to play with.
 
+
+
+## Usage
+
+You can install the compiler via:
+
+    $ go get github.com/skx/bfcc
+
+Once installed execute the compiler as follows to produce the default executable at `./a.out`:
+
+    $ bfcc ./examples/mandelbrot.bf
+
+Rather than compile, then run, you can add `-run` to your invocation:
+
+    $ bfcc -run ./examples/bizzfuzz.bf
+
+Finally if you prefer you can specify an output name for the compiled result:
+
+    $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
+
+
+**NOTE**: You need to have
 
 
 ## Rough Plan
@@ -50,25 +72,6 @@ There are a small collection of test-programs located beneath the [examples/](ex
 Each example has a `.bf` suffix, and there is a corresponding output file for each input to show the expected output.
 
 You can run `make test` to run all the scripts, and compare their generated output with the expected result.
-
-
-## Usage
-
-You can install the compiler via:
-
-    $ go get github.com/skx/bfcc
-
-Once installed execute the compiler like so to produce the default executable at `./a.out`:
-
-    $ bfcc ./examples/mandelbrot.bf
-
-Rather than compile, then run, you can add `-run` to your invocation:
-
-    $ bfcc -run ./examples/bizzfuzz.bf
-
-Finally if you prefer you can specify an output name for the compiled result:
-
-    $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
 
 
 ## Speed
