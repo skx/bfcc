@@ -48,6 +48,10 @@ Once installed execute the compiler like so:
     sys	0m0.000s
     $
 
+Rather than compile, then run, you can add `-run` to your invocation:
+
+    $ bfcc -run ./examples/bizzfuzz.bf
+
 
 ## Bug Reports?
 
