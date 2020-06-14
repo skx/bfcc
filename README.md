@@ -27,7 +27,7 @@ Finally if you prefer you can specify an output name for the compiled result:
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
 
 
-**NOTE**: You need to have
+**NOTE**: You need to have `nasm` installed to compile the generated assembly language file.
 
 
 ## Rough Plan
@@ -110,6 +110,14 @@ With that the timings become:
 | C                  | 1.177s  |
 | Assembly           | 2.694s  |
 | Optimized Assembly | 1.542s  |
+
+
+
+## Future Plans?
+
+None.
+
+It might be cute to convert the assembly, such that `gcc` could compile it.  That would drop the `nasm` dependency, but it's not a big deal.  Patches welcome if you want to have a stab at it.
 
 
 ## Bug Reports?
