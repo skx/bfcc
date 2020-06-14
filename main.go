@@ -246,6 +246,7 @@ func main() {
 
 	if *run {
 		exe := exec.Command(output)
+		exe.Stdin = os.Stdin
 		exe.Stdout = os.Stdout
 		exe.Stderr = os.Stderr
 		err = exe.Run()
