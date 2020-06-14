@@ -56,15 +56,9 @@ You can install the compiler via:
 
     $ go get github.com/skx/bfcc
 
-Once installed execute the compiler like so:
+Once installed execute the compiler like so to produce the default executable at `./a.out`:
 
     $ bfcc ./examples/mandelbrot.bf
-    $ time ./a.out
-    ..
-    real	0m1.177s
-    user	0m1.172s
-    sys	0m0.000s
-    $
 
 Rather than compile, then run, you can add `-run` to your invocation:
 
@@ -73,6 +67,30 @@ Rather than compile, then run, you can add `-run` to your invocation:
 Finally if you prefer you can specify an output name for the compiled result:
 
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
+
+
+## Speed
+
+I've implemented two simple "compilers":
+
+* The first generated C code.
+  * This was then compiled via `gcc` (with `-O3`).
+* The second generated assembly language code.
+  * Compile via `nasm`, and linked with `ld`.
+
+The most complicated program I've run was the Mandelbrot generator, and surprisingly the runtime of the C-based version is faster:
+
+| Version  | RunTime |
+|----------|---------|
+| C        | 1.177s  |
+| Assembly | 2.694s  |
+
+```
+
+Of course there are obvious optimizations to be made, which is why I structured the assembly language output as I did.  For example `>` is used to increase our index.  I compile `>` to `add r8, 1` as the R8 register is used for our index.
+
+However I compile "`>>>`" into "`add r8, 1; add r8, 1; add r8, 1` when instead I should compile it into `add r8,3`.  (i.e. I can collapse multiple identical instances of the increase/decrease instructions into a single instruction.)
+
 
 
 ## Bug Reports?
