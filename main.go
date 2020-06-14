@@ -18,41 +18,80 @@ import (
 func generateProgram(source string) (string, error) {
 	var buff bytes.Buffer
 	var programStart = `
-	extern int putchar(int);
-	extern char getchar();
+global _start
+section .text
 
-	char array[30000];
-	int idx = 0;
-
-	int main (int arc, char *argv[]) {
+_start:
+  mov r8, stack
 	`
 	buff.WriteString(programStart)
 
 	bts := []byte(source)
-	for _, bt := range bts {
+	opens := []int{}
+
+	for i, bt := range bts {
 		switch bt {
 		case '>':
-			buff.WriteString("idx++;\n")
+			buff.WriteString("  add r8, 1\n")
 		case '<':
-			buff.WriteString("idx--;\n")
+			buff.WriteString("  sub r8, 1\n")
 		case '+':
-			buff.WriteString("array[idx]++;\n")
+			buff.WriteString("  add byte [r8], 1\n")
 		case '-':
-			buff.WriteString("array[idx]--;\n")
+			buff.WriteString("  sub byte [r8], 1\n")
 		case '.':
-			buff.WriteString("putchar(array[idx]);\n")
+			// output
+			buff.WriteString("  mov rax, 1\n")  // SYS_WRITE
+			buff.WriteString("  mov rdi, 1\n")  // STDOUT
+			buff.WriteString("  mov rsi, r8\n") // data-comes-here
+			buff.WriteString("  mov rdx, 1\n")  // one byte
+			buff.WriteString("  syscall\n")     // Syscall
 		case ',':
-			buff.WriteString("array[idx] = getchar();\n")
+			// input
+			buff.WriteString("  mov rax, 0\n")  // SYS_READ
+			buff.WriteString("  mov rdi, 0\n")  // STDIN
+			buff.WriteString("  mov rsi, r8\n") // Dest
+			buff.WriteString("  mov rdx, 1\n")  // one byte
+			buff.WriteString("  syscall\n")     // syscall
 		case '[':
-			buff.WriteString("while (array[idx]) {\n")
+
+			//
+			// Open of a block.
+			//
+			// If the index-value is zero then jump to the
+			// end of the while-loop.
+			//
+
+			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
+			buff.WriteString("  cmp byte [r8], 0\n")
+			buff.WriteString(fmt.Sprintf("  je close_loop_%d\n", i))
+			opens = append(opens, i)
 		case ']':
-			buff.WriteString("}\n")
+			// "]" can only follow an "[".
+			//
+			// Every time we see a "[" we save the ID onto a
+			// temporary stack.  So we're gonna go back to the
+			// most recent open.
+			//
+			// This will cope with nesting.
+			//
+			last := opens[len(opens)-1]
+			opens = opens[:len(opens)-1]
+			buff.WriteString(fmt.Sprintf("  jmp label_loop_%d\n", last))
+			buff.WriteString(fmt.Sprintf("close_loop_%d:\n", last))
 		}
 	}
 
-	buff.WriteString("}\n")
+	// terminate
+	buff.WriteString("  mov rax, 60\n")
+	buff.WriteString("  mov rdi, 0\n")
+	buff.WriteString("  syscall\n")
 
-	tmpfile, err := ioutil.TempFile("", "bfcc*.c")
+	// program-area
+	buff.WriteString("section .bss\n")
+	buff.WriteString("stack: resb 300000\n")
+
+	tmpfile, err := ioutil.TempFile("", "bfcc*.s")
 	if err != nil {
 		return "", err
 	}
@@ -115,15 +154,29 @@ func main() {
 	// Compile
 	//
 	if *compile {
-		gcc := exec.Command("gcc", "-O3", "-Ofast", "-o", output, path)
-		gcc.Stdout = os.Stdout
-		gcc.Stderr = os.Stderr
 
-		err = gcc.Run()
+		// nasm to compile to object-code
+		nasm := exec.Command("nasm", "-f", "elf64", "-o", fmt.Sprintf("%s.o", output), path)
+		nasm.Stdout = os.Stdout
+		nasm.Stderr = os.Stderr
+
+		err = nasm.Run()
 		if err != nil {
-			fmt.Printf("Error launching gcc: %s\n", err)
+			fmt.Printf("Error launching nasm: %s\n", err)
 			return
 		}
+
+		// ld to link to an executable
+		ld := exec.Command("ld", "-m", "elf_x86_64", "-o", output, fmt.Sprintf("%s.o", output))
+		ld.Stdout = os.Stdout
+		ld.Stderr = os.Stderr
+
+		err = ld.Run()
+		if err != nil {
+			fmt.Printf("Error launching ld: %s\n", err)
+			return
+		}
+
 	}
 
 	if *run {

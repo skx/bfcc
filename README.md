@@ -14,13 +14,13 @@ There are a lot of different ways to skin this cat, but my starting plan is to d
 
 * [x] Parse a valid program.
 * [x] Generate C-code which corresponds to that input.
-* [x] Compile it with GCC.
+* [x] Compile it with `gcc`.
 
 Now that this is done the next step would be to drop the use of GCC and instead generate assembly language:
 
-* [ ] Parse a valid program.
-* [ ] Generate an x86 assembly version of the input.
-* [ ] Compile it with nasm/gcc/similar.
+* [x] Parse a valid program.
+* [x] Generate an x86 assembly version of the input.
+* [x] Compile it with `nasm`, and link with `ldd`.
 
 A completely-final step would be to drop the use of the assembler entirely, generating a native ELF binary, but I suspect I might not get that far.
 
@@ -33,6 +33,8 @@ A completely-final step would be to drop the use of the assembler entirely, gene
   * Generated initial version of BrainFuck -> C in 30 minutes.
 * Paused for a break at 12:58
   * Had added documentation, added more sample programs, and added test-suite.
+* Started work at 15:00 again.
+  * Implemented trivial assembly language version.
 
 
 ## Test Programs
