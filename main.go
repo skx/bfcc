@@ -90,7 +90,7 @@ func main() {
 	input := flag.Args()[0]
 	output := "a.out"
 	if len(flag.Args()) == 2 {
-		output = os.Args[1]
+		output = flag.Args()[1]
 	}
 
 	//
