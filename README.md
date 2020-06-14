@@ -25,3 +25,29 @@ A completely-final step would be to drop the use of the assembler entirely, gene
 * Generated initial version of BrainFuck -> C in 30 minutes.
 
 Time taken: 30 minutes.
+
+
+## Usage
+
+You can install the generator via:
+
+    $ go get github.com/skx/bfcc
+
+Once installed execute the compiler like so:
+
+    $ bfcc ./examples/mandelbrot.bf
+    $ time ./a.out
+    ..
+    real	0m1.177s
+    user	0m1.172s
+    sys	0m0.000s
+    $
+
+
+## Bug Reports?
+
+Please [file an issue](https://github.com/skx/bfcc/issues)
+
+
+Steve
+--
