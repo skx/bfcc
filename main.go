@@ -12,9 +12,9 @@ import (
 	"os/exec"
 )
 
-// Given an input brainfuck program generate a comparable C version.
+// Given an input brainfuck program generate a comparable assembly version.
 //
-// Return the filename we generated, or error
+// Return the filename we generated, or error.
 func generateProgram(source string) (string, error) {
 	var buff bytes.Buffer
 	var programStart = `
@@ -23,7 +23,7 @@ section .text
 
 _start:
   mov r8, stack
-	`
+`
 	buff.WriteString(programStart)
 
 	bts := []byte(source)
@@ -111,8 +111,9 @@ func main() {
 	//
 	// Parse command-line flags
 	//
-	compile := flag.Bool("compile", true, "Compile the generated C, after generation")
-	run := flag.Bool("run", false, "Run the program after compiling")
+	compile := flag.Bool("compile", true, "Compile the assembly file, after generation.")
+	cleanup := flag.Bool("cleanup", true, "Remove the temporary assembly file after creation.")
+	run := flag.Bool("run", false, "Run the program after compiling.")
 	flag.Parse()
 
 	//
@@ -189,5 +190,14 @@ func main() {
 			os.Exit(1)
 		}
 
+	}
+
+	//
+	// Cleanup
+	//
+	if *cleanup {
+		os.Remove(path)
+	} else {
+		fmt.Printf("Generated output left at %s\n", path)
 	}
 }
