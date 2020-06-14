@@ -1,3 +1,20 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/skx/bfcc)](https://goreportcard.com/report/github.com/skx/bfcc)
+[![license](https://img.shields.io/github/license/skx/bfcc.svg)](https://github.com/skx/bfcc/blob/master/LICENSE)
+
+Table of Contents
+=================
+
+* [BrainFuck Compiler Challenge](#brainfuck-compiler-challenge)
+   * [Usage](#usage)
+   * [Rough Plan](#rough-plan)
+   * [Timeline](#timeline)
+   * [Test Programs](#test-programs)
+   * [Speed](#speed)
+   * [Future Plans?](#future-plans)
+   * [Bug Reports?](#bug-reports)
+
+
+
 # BrainFuck Compiler Challenge
 
 The aim of this repository was to contain a BrainFuck compiler, written in Golang, and completed in less than a day.
