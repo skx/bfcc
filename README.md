@@ -105,7 +105,7 @@ The optimized version was :
 
 Finally I made another change to look for loop termination in the handler for `]`, to avoid unnecessary jumps
 
-*
+* [88e2551fbafea7814de7fe6d7ef5df2b5a47abe2](https://github.com/skx/bfcc/tree/88e2551fbafea7814de7fe6d7ef5df2b5a47abe2)
 
 With that the timings become:
 
