@@ -10,19 +10,21 @@ That said brainfuck, despite the name, as a good history in the programming worl
 
 ## Rough Plan
 
-There are a lot of different ways to skin this cat, but my starting plan is to do this:
+There are a lot of different ways to skin this cat, but my starting plan was to do this:
 
 * [x] Parse a valid program.
 * [x] Generate C-code which corresponds to that input.
 * [x] Compile it with `gcc`.
 
-Now that this is done the next step would be to drop the use of GCC and instead generate assembly language:
+Once that was completed the next step would be to drop the use of GCC and instead generate assembly language:
 
 * [x] Parse a valid program.
 * [x] Generate an x86 assembly version of the input.
 * [x] Compile it with `nasm`, and link with `ldd`.
 
-A completely-final step would be to drop the use of the assembler entirely, generating a native ELF binary, but I suspect I might not get that far.
+Annoyingly I noticed that when I compiled the Mandelbrot example via the assembly language version it was slower than the C-based version.  So I had some more things to do:
+
+* [x] Optimize the generated assembly language.
 
 
 
@@ -85,12 +87,26 @@ The most complicated program I've run was the Mandelbrot generator, and surprisi
 | C        | 1.177s  |
 | Assembly | 2.694s  |
 
-```
 
 Of course there are obvious optimizations to be made, which is why I structured the assembly language output as I did.  For example `>` is used to increase our index.  I compile `>` to `add r8, 1` as the R8 register is used for our index.
 
 However I compile "`>>>`" into "`add r8, 1; add r8, 1; add r8, 1` when instead I should compile it into `add r8,3`.  (i.e. I can collapse multiple identical instances of the increase/decrease instructions into a single instruction.)
 
+The starting version of the assembly output was :
+
+* [aebb14ccb548a2249bc32bb1f82fe9070518cc3c](https://github.com/skx/bfcc/tree/aebb14ccb548a2249bc32bb1f82fe9070518cc3c)
+
+The optimized version was :
+
+* [](TODO)
+
+With that the timings become:
+
+| Version            | RunTime |
+|--------------------|---------|
+| C                  | 1.177s  |
+| Assembly           | 2.694s  |
+| Optimized Assembly | 1.542s  |
 
 
 ## Bug Reports?

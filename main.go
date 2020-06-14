@@ -26,19 +26,47 @@ _start:
 `
 	buff.WriteString(programStart)
 
-	bts := []byte(source)
+	//
+	// Keep track of "[" here.
+	//
+	// These are loop opens.
+	//
 	opens := []int{}
 
-	for i, bt := range bts {
-		switch bt {
+	i := 0
+	ln := len(source)
+
+	for i < ln {
+
+		switch source[i] {
 		case '>':
-			buff.WriteString("  add r8, 1\n")
+			end := i
+			for source[end] == '>' {
+				end++
+			}
+			buff.WriteString(fmt.Sprintf("  add r8, %d\n", end-i))
+			i = end - 1
 		case '<':
-			buff.WriteString("  sub r8, 1\n")
+			end := i
+			for source[end] == '<' {
+				end++
+			}
+			buff.WriteString(fmt.Sprintf("  sub r8, %d\n", end-i))
+			i = end - 1
 		case '+':
-			buff.WriteString("  add byte [r8], 1\n")
+			end := i
+			for source[end] == '+' {
+				end++
+			}
+			buff.WriteString(fmt.Sprintf("  add byte [r8], %d\n", end-i))
+			i = end - 1
 		case '-':
-			buff.WriteString("  sub byte [r8], 1\n")
+			end := i
+			for source[end] == '-' {
+				end++
+			}
+			buff.WriteString(fmt.Sprintf("  sub byte [r8], %d\n", end-i))
+			i = end - 1
 		case '.':
 			// output
 			buff.WriteString("  mov rax, 1\n")  // SYS_WRITE
@@ -80,6 +108,8 @@ _start:
 			buff.WriteString(fmt.Sprintf("  jmp label_loop_%d\n", last))
 			buff.WriteString(fmt.Sprintf("close_loop_%d:\n", last))
 		}
+
+		i++
 	}
 
 	// terminate
