@@ -103,14 +103,18 @@ The optimized version was :
 
 * [91d6712bcb4b41e9fd963f60da2753d62ee789d1](https://github.com/skx/bfcc/commit/91d6712bcb4b41e9fd963f60da2753d62ee789d1)
 
+Finally I made another change to look for loop termination in the handler for `]`, to avoid unnecessary jumps
+
+*
+
 With that the timings become:
 
-| Version            | RunTime |
-|--------------------|---------|
-| C                  | 1.177s  |
-| Assembly           | 2.694s  |
-| Optimized Assembly | 1.542s  |
-
+| Version                | RunTime |
+|------------------------|---------|
+| C                      | 1.177s  |
+| Assembly               | 2.694s  |
+| Optimized Assembly     | 1.542s  |
+| JMP optimized assembly | 1.260s  |
 
 
 ## Future Plans?

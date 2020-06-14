@@ -89,10 +89,12 @@ _start:
 			// If the index-value is zero then jump to the
 			// end of the while-loop.
 			//
-
-			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
+			// NOTE: We repeat the test at the end of the
+			// loop so the label here is AFTER our condition
+			//
 			buff.WriteString("  cmp byte [r8], 0\n")
 			buff.WriteString(fmt.Sprintf("  je close_loop_%d\n", i))
+			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
 			opens = append(opens, i)
 		case ']':
 			// "]" can only follow an "[".
@@ -103,9 +105,41 @@ _start:
 			//
 			// This will cope with nesting.
 			//
+
+			//
+			// Get the last label-ID
+			//
 			last := opens[len(opens)-1]
+
+			//
+			// Remove it from our list now.
+			//
 			opens = opens[:len(opens)-1]
-			buff.WriteString(fmt.Sprintf("  jmp label_loop_%d\n", last))
+
+			//
+			// What we could do here is jump back to the
+			// start of our loop.
+			//
+			// The test would be made, and if it failed we'd
+			// end up back at the end of the loop.
+			//
+			// However we're tricksy hobbitses, so we run
+			// the test again, and only jump back if the
+			// loop is not yet over.
+			//
+			// As per suggestion from Wikipedia.
+			//
+			// This has a cost of comparing twice, but
+			// a benefit of ensuring we don't jump more than
+			// we need to.
+			//
+			// NOTE: That we jump AFTER the conditional
+			// test at the start of the loop, because
+			// running it twice would be pointless.
+			//
+			buff.WriteString("  cmp byte [r8], 0\n")
+
+			buff.WriteString(fmt.Sprintf("  jne label_loop_%d\n", last))
 			buff.WriteString(fmt.Sprintf("close_loop_%d:\n", last))
 		}
 
