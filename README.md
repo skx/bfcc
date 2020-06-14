@@ -34,7 +34,11 @@ A completely-final step would be to drop the use of the assembler entirely, gene
 * Paused for a break at 12:58
   * Had added documentation, added more sample programs, and added test-suite.
 * Started work at 15:00 again.
-  * Implemented trivial assembly language version.
+  * Implemented trivial assembly language version by 15:30.
+
+You can walk backwards in the commit-history if you wish, but the final version of the C-generating version was:
+
+* [cadb19d6c75a5febde56f53423a9668ee8f6bd25](https://github.com/skx/bfcc/tree/cadb19d6c75a5febde56f53423a9668ee8f6bd25)
 
 
 ## Test Programs
