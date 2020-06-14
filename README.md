@@ -1,6 +1,6 @@
 # BrainFuck Compiler Challenge
 
-The aim of this repository is to contain a BrainFuck compiler, written in Golang, in less than a day.
+The aim of this repository was to contain a BrainFuck compiler, written in Golang, and completed in less than a day.
 
 [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) is an esoteric programming language created in 1993 by Urban Müller, and is notable for its extreme minimalism.  It supports only a few instructions, and is practically unreadable.
 
@@ -17,6 +17,7 @@ You can install the compiler via:
 Once installed execute the compiler as follows to produce the default executable at `./a.out`:
 
     $ bfcc ./examples/mandelbrot.bf
+    $ ./a.out
 
 Rather than compile, then run, you can add `-run` to your invocation:
 
@@ -25,7 +26,7 @@ Rather than compile, then run, you can add `-run` to your invocation:
 Finally if you prefer you can specify an output name for the compiled result:
 
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
-
+    $ ./bf
 
 **NOTE**: You need to have `nasm` installed to compile the generated assembly language file.
 
@@ -38,10 +39,10 @@ There are a lot of different ways to skin this cat, but my starting plan was to 
 * [x] Generate C-code which corresponds to that input.
 * [x] Compile it with `gcc`.
 
-Once that was completed the next step would be to drop the use of GCC and instead generate assembly language:
+Once that was completed the next step was to drop the use of C compiled by GCC, instead generating assembly language:
 
 * [x] Parse a valid program.
-* [x] Generate an x86 assembly version of the input.
+* [x] Generate an x86-64 assembly version of the input.
 * [x] Compile it with `nasm`, and link with `ldd`.
 
 Annoyingly I noticed that when I compiled the Mandelbrot example via the assembly language version it was slower than the C-based version.  So I had some more things to do:
@@ -59,10 +60,8 @@ Annoyingly I noticed that when I compiled the Mandelbrot example via the assembl
   * Had added documentation, added more sample programs, and added test-suite.
 * Started work at 15:00 again.
   * Implemented trivial assembly language version by 15:30.
+* Spent another hour cleaning up comments, _this_ README.md file, and applying basic optimizations.
 
-You can walk backwards in the commit-history if you wish, but the final version of the C-generating version was:
-
-* [cadb19d6c75a5febde56f53423a9668ee8f6bd25](https://github.com/skx/bfcc/tree/cadb19d6c75a5febde56f53423a9668ee8f6bd25)
 
 
 ## Test Programs
@@ -72,6 +71,7 @@ There are a small collection of test-programs located beneath the [examples/](ex
 Each example has a `.bf` suffix, and there is a corresponding output file for each input to show the expected output.
 
 You can run `make test` to run all the scripts, and compare their generated output with the expected result.
+
 
 
 ## Speed
@@ -95,6 +95,10 @@ Of course there are obvious optimizations to be made, which is why I structured 
 
 However I compile "`>>>`" into "`add r8, 1; add r8, 1; add r8, 1` when instead I should compile it into `add r8,3`.  (i.e. I can collapse multiple identical instances of the increase/decrease instructions into a single instruction.)
 
+The final version of the C-generating version was:
+
+* [cadb19d6c75a5febde56f53423a9668ee8f6bd25](https://github.com/skx/bfcc/tree/cadb19d6c75a5febde56f53423a9668ee8f6bd25)
+
 The starting version of the assembly output was :
 
 * [aebb14ccb548a2249bc32bb1f82fe9070518cc3c](https://github.com/skx/bfcc/tree/aebb14ccb548a2249bc32bb1f82fe9070518cc3c)
@@ -117,11 +121,13 @@ With that the timings become:
 | JMP optimized assembly | 1.260s  |
 
 
+
 ## Future Plans?
 
 None.
 
 It might be cute to convert the assembly, such that `gcc` could compile it.  That would drop the `nasm` dependency, but it's not a big deal.  Patches welcome if you want to have a stab at it.
+
 
 
 ## Bug Reports?
