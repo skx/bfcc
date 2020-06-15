@@ -17,11 +17,11 @@ Table of Contents
 
 # BrainFuck Compiler Challenge
 
-The aim of this repository was to contain a BrainFuck compiler, written in Golang, and completed in less than a day.
+I challenged myself to write a BrainFuck compiler, in less than a day.  This repository contains the result.  I had an initial sprint of 3-4 hours, which lead to a working system, and then spent a little longer tidying and cleaning it up.
 
 [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) is an esoteric programming language created in 1993 by Urban Müller, and is notable for its extreme minimalism.  It supports only a few instructions, and is practically unreadable.
 
-That said brainfuck, despite the name, has a good history in the programming world as being something simple and well-defined to play with.
+Brainfuck, despite the name, has a good history in the programming world as being something simple and fun to play with.
 
 
 
