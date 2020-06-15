@@ -1,6 +1,17 @@
+// bfcc is a trivial compiler for converting BrainFuck programs into
+// executables.
 //
-// Trivial "compiler" for BrainFuck
+// The bfcc compiler contains a pair of backends which can be used to generate
+// executables.
 //
+// There is a backend named `asm` which converts the input program into an
+// assembly-language file, and then compiles it via `gcc`.
+//
+// Then there is a second backend named `c` which converts the input-program
+// into a C source-file, and then also compiles it via `gcc`.
+//
+// The end result of either approach should be a working, native, executable
+// which can be executed to run the brainfuck program.
 package main
 
 import (
