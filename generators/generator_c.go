@@ -40,7 +40,7 @@ int main (int arc, char *argv[]) {
 	//
 	// Create a lexer for the input program
 	//
-	l := lexer.NewLexer(c.input)
+	l := lexer.New(c.input)
 
 	//
 	// Loop forever, processing the next token

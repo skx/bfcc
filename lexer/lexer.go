@@ -53,9 +53,9 @@ type Lexer struct {
 	known map[string]string
 }
 
-// NewLexer creates a new Lexer, which will parse the specified
+// New creates a new Lexer, which will parse the specified
 // input program into a series of tokens.
-func NewLexer(input string) *Lexer {
+func New(input string) *Lexer {
 
 	// Create the lexer object.
 	l := &Lexer{input: input}

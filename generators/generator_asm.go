@@ -55,7 +55,7 @@ main:
 	//
 	// Create a lexer for the input program
 	//
-	l := lexer.NewLexer(g.input)
+	l := lexer.New(g.input)
 
 	//
 	// Loop forever, processing the next token

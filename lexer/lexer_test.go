@@ -22,7 +22,7 @@ func TestLexer(t *testing.T) {
 		{EOF, 1},
 	}
 
-	l := NewLexer("+-<<<<<\n>>>>>[].,")
+	l := New("+-<<<<<#\n`>>>>>[].,")
 
 	for i, tt := range tests {
 		tok := l.Next()
@@ -48,7 +48,7 @@ func TestAdjacent(t *testing.T) {
 		{EOF, 1},
 	}
 
-	l := NewLexer("+\n+\n+\n+\n+- - - - -")
+	l := New("+\n+\n+\n+\n+- - - - -")
 
 	for i, tt := range tests {
 		tok := l.Next()
