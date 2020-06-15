@@ -45,11 +45,11 @@ Finally if you prefer you can specify an output name for the compiled result:
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
     $ ./bf
 
-There are two backends included, one generates an assembly language source-file, and compiles with with `nasm`, and the other generates C-code, which is compiled via `gcc`.
+There are two backends included, one generates an assembly language source-file, and compiles with `gcc`, and the other generates C-code which is also compiled via `gcc`.
 
-By default the assembly-language backend is selected, because this is the thing that I was more interested in writing, due to that you **must** have `nasm` installed to compile the generated assembly language file.
+By default the assembly-language backend is selected, because this is the thing that I was more interested in writing.
 
-Use the `-backend` flag to specify the backend which you prefer to use:
+You may use the `-backend` flag to specify the backend which you prefer to use:
 
     $ bfcc -backend=c   ./examples/mandelbrot.bf ./mb-c
     $ bfcc -backend=asm ./examples/mandelbrot.bf ./mb-asm
@@ -57,8 +57,8 @@ Use the `-backend` flag to specify the backend which you prefer to use:
 You'll see slightly difference sizes in the two executable:
 
     $ ls -lash mb-c mb-asm
-    76K -rwxr-xr-x 1 skx skx 73K Jun 15 10:11 mb-asm
-    36K -rwxr-xr-x 1 skx skx 34K Jun 15 10:11 mb-c
+    76K -rwxr-xr-x 1 skx skx 860K Jun 15 10:11 mb-asm
+    36K -rwxr-xr-x 1 skx skx  34K Jun 15 10:11 mb-c
 
 But both should work identically; if they do not that's a bug in the generated C/assembly source files I've generated!
 
@@ -80,7 +80,7 @@ In the end it took me about four hours to get something I was happy with, and la
 * Finally I cleaned up and improved the code.
   * Implementing a separate lexer.
   * Allowing the use of pluggable backends, so we could generate both C and Assembly Language output (but only one at a time).
-
+  * Started using `gcc` to compile our assembly, to drop the dependency upon `nasm`.
 
 
 
@@ -98,6 +98,8 @@ In the end it took me about four hours to get something I was happy with, and la
   * Adding a lexer in [#4](https://github.com/skx/bfcc/pull/4)
   * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6)
   * Allow generating a breakpoint instruction when using the assembly-backend in [#7](https://github.com/skx/bfcc/pull/7).
+  * Switched to generating assembly to be compiled by `gcc` rather than `nasm` [#8](https://github.com/skx/bfcc/pull/8).
+
 
 
 ### Debugging the generated program
@@ -159,9 +161,7 @@ You can run `make test` to run all the scripts, and compare their generated outp
 
 Mostly none.
 
-It might be cute to convert the assembly, such that `gcc` could compile it.  That would drop the `nasm` dependency, but it's not a big deal.  Patches welcome if you want to have a stab at it.
-
-Otherwise more backends might be nice, but I guess the two existing ones are the most obvious.  Due to the way the code is structured adding a new one would be trivial though.
+More backends might be nice, but I guess the two existing ones are the most obvious.  Due to the way the code is structured adding a new one would be trivial.
 
 
 
