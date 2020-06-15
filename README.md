@@ -1,5 +1,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/skx/bfcc)](https://goreportcard.com/report/github.com/skx/bfcc)
 [![license](https://img.shields.io/github/license/skx/bfcc.svg)](https://github.com/skx/bfcc/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/skx/bfcc.svg)](https://github.com/skx/bfcc/releases/latest)
 
 Table of Contents
 =================
@@ -12,16 +13,17 @@ Table of Contents
    * [Test Programs](#test-programs)
    * [Future Plans?](#future-plans)
    * [Bug Reports?](#bug-reports)
+   * [Github Setup](#github-setup)
 
 
 
 # BrainFuck Compiler Challenge
 
-The aim of this repository was to contain a BrainFuck compiler, written in Golang, and completed in less than a day.
+I challenged myself to write a BrainFuck compiler, in less than a day.  This repository contains the result.  I had an initial sprint of 3-4 hours, which lead to a working system, and then spent a little longer tidying and cleaning it up.
 
 [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) is an esoteric programming language created in 1993 by Urban Müller, and is notable for its extreme minimalism.  It supports only a few instructions, and is practically unreadable.
 
-That said brainfuck, despite the name, has a good history in the programming world as being something simple and well-defined to play with.
+Brainfuck, despite the name, has a good history in the programming world as being something simple and fun to play with.
 
 
 
@@ -169,6 +171,19 @@ More backends might be nice, but I guess the two existing ones are the most obvi
 ## Bug Reports?
 
 Please [file an issue](https://github.com/skx/bfcc/issues)
+
+
+
+
+# Github Setup
+
+This repository is configured to run tests upon every commit, and when
+pull-requests are created/updated.  The testing is carried out via
+[.github/run-tests.sh](.github/run-tests.sh) which is used by the
+[github-action-tester](https://github.com/skx/github-action-tester) action.
+
+Releases are automated in a similar fashion via [.github/build](.github/build),
+and the [github-action-publish-binaries](https://github.com/skx/github-action-publish-binaries) action.
 
 
 Steve
