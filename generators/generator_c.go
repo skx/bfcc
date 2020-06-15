@@ -128,7 +128,7 @@ func (c *GeneratorC) Generate(input string, output string) error {
 	c.output = output
 
 	//
-	// Generate our assembly
+	// Generate our output program
 	//
 	err := c.generateSource()
 	if err != nil {
@@ -143,6 +143,10 @@ func (c *GeneratorC) Generate(input string, output string) error {
 		return err
 	}
 
+	//
+	// Cleanup our source file?  Or leave it alone
+	// and output the name of the program we created.
+	//
 	clean := os.Getenv("CLEANUP")
 	if clean == "1" {
 		os.Remove(c.output + ".c")

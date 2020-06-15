@@ -15,16 +15,22 @@ type Generator interface {
 	Generate(input string, output string) error
 }
 
+//
+// Everything below here is boilerplate to allow
+// class-registration and lookup.
+//
+
 // This is a map of known-backends.
 var handlers = struct {
 	m map[string]NewGenerator
 	sync.RWMutex
 }{m: make(map[string]NewGenerator)}
 
-// NewGenerator is the signature of a constructor-function.
+// NewGenerator is the signature of a constructor-function to
+// instantiate a backend.
 type NewGenerator func() Generator
 
-// Register a back-end with a constructor.
+// Register allows a new backend to self-register itself, with a name.
 func Register(id string, newfunc NewGenerator) {
 	handlers.Lock()
 	handlers.m[id] = newfunc

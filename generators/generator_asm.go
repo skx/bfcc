@@ -28,9 +28,7 @@ func (g *GeneratorASM) generateSource() error {
 	var buff bytes.Buffer
 	var programStart = `
 .intel_syntax noprefix
-
 .global main
-
 
 main:
   lea %r8, stack
@@ -202,6 +200,8 @@ main:
 	return err
 }
 
+// compileSource passes our generated source-program through `gcc`
+// to compile it to an executable.
 func (g *GeneratorASM) compileSource() error {
 
 	// Use gcc to compile our object-code
@@ -231,7 +231,7 @@ func (g *GeneratorASM) Generate(input string, output string) error {
 	g.output = output
 
 	//
-	// Generate our assembly
+	// Generate our output program
 	//
 	err := g.generateSource()
 	if err != nil {
@@ -246,13 +246,14 @@ func (g *GeneratorASM) Generate(input string, output string) error {
 		return err
 	}
 
+	//
+	// Cleanup our source file?  Or leave it alone
+	// and output the name of the program we created.
+	//
 	clean := os.Getenv("CLEANUP")
 	if clean == "1" {
 		os.Remove(g.output + ".s")
-		os.Remove(g.output + ".o")
 	} else {
-
-		os.Remove(g.output + ".o")
 		fmt.Printf("generated source file at %s\n", g.output+".s")
 	}
 
