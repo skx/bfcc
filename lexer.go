@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 // These constants are our token-types
 const (
 	EOF = "EOF"
@@ -49,6 +51,11 @@ func NewLexer(input string) *Lexer {
 
 	// Create the lexer object.
 	l := &Lexer{input: input}
+
+	// Strip newlines/spaces from our iput
+	l.input = strings.ReplaceAll(l.input, "\n", "")
+	l.input = strings.ReplaceAll(l.input, "\r", "")
+	l.input = strings.ReplaceAll(l.input, " ", "")
 
 	// Populate the simple token-types in a map for
 	// later use.
