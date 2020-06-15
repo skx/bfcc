@@ -1,5 +1,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/skx/bfcc)](https://goreportcard.com/report/github.com/skx/bfcc)
 [![license](https://img.shields.io/github/license/skx/bfcc.svg)](https://github.com/skx/bfcc/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/skx/bfcc.svg)](https://github.com/skx/bfcc/releases/latest)
 
 Table of Contents
 =================
@@ -12,6 +13,7 @@ Table of Contents
    * [Test Programs](#test-programs)
    * [Future Plans?](#future-plans)
    * [Bug Reports?](#bug-reports)
+   * [Github Setup](#github-setup)
 
 
 
@@ -169,6 +171,19 @@ More backends might be nice, but I guess the two existing ones are the most obvi
 ## Bug Reports?
 
 Please [file an issue](https://github.com/skx/bfcc/issues)
+
+
+
+
+# Github Setup
+
+This repository is configured to run tests upon every commit, and when
+pull-requests are created/updated.  The testing is carried out via
+[.github/run-tests.sh](.github/run-tests.sh) which is used by the
+[github-action-tester](https://github.com/skx/github-action-tester) action.
+
+Releases are automated in a similar fashion via [.github/build](.github/build),
+and the [github-action-publish-binaries](https://github.com/skx/github-action-publish-binaries) action.
 
 
 Steve
