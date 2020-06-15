@@ -1,3 +1,11 @@
+// Package lexer is a simple lexer for processing BrainFuck programs.
+//
+// A given program will be parsed into a series of tokens, with unrecognized
+// input characters skipped over.
+//
+// As an optimization we collapse multiple adjacent tokens together, and
+// return their type as well as a count of how many times the character
+// was repeated.
 package lexer
 
 import "strings"
