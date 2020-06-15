@@ -6,10 +6,9 @@ Table of Contents
 
 * [BrainFuck Compiler Challenge](#brainfuck-compiler-challenge)
    * [Usage](#usage)
-   * [Rough Plan](#rough-plan)
+   * [My Approach](#my-approach)
    * [Timeline](#timeline)
    * [Test Programs](#test-programs)
-   * [Speed](#speed)
    * [Future Plans?](#future-plans)
    * [Bug Reports?](#bug-reports)
 
@@ -45,26 +44,42 @@ Finally if you prefer you can specify an output name for the compiled result:
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
     $ ./bf
 
-**NOTE**: You need to have `nasm` installed to compile the generated assembly language file.
+There are two backends included, one generates an assembly language source-file, and compiles with with `nasm`, and the other generates C-code, which is compiled via `gcc`.
+
+By default the assembly-language backend is selected, because this is the thing that I was more interested in writing, due to that you **must** have `nasm` installed to compile the generated assembly language file.
+
+Use the `-backend` flag to specify the backend which you prefer to use:
+
+    $ bfcc -backend=c   ./examples/mandelbrot.bf ./mb-c
+    $ bfcc -backend=asm ./examples/mandelbrot.bf ./mb-asm
+
+You'll see slightly difference sizes in the two executable:
+
+    $ ls -lash mb-c mb-asm
+    76K -rwxr-xr-x 1 skx skx 73K Jun 15 10:11 mb-asm
+    36K -rwxr-xr-x 1 skx skx 34K Jun 15 10:11 mb-c
+
+But both should work identically; if they do not that's a bug in the generated C/assembly source files I've generated!
 
 
-## Rough Plan
 
-There are a lot of different ways to skin this cat, but my starting plan was to do this:
 
-* [x] Parse a valid program.
-* [x] Generate C-code which corresponds to that input.
-* [x] Compile it with `gcc`.
+## My Approach
 
-Once that was completed the next step was to drop the use of C compiled by GCC, instead generating assembly language:
+In the end it took me about four hours to get something I was happy with, and later I've improved it a little more:
 
-* [x] Parse a valid program.
-* [x] Generate an x86-64 assembly version of the input.
-* [x] Compile it with `nasm`, and link with `ldd`.
+* Initially I generated C-code, [as you can see here](https://github.com/skx/bfcc/blob/cadb19d6c75a5febde56f53423a9668ee8f6bd25/main.go).
+  * This code was largely inspired by the [wikipedia brainfuck page](https://en.wikipedia.org/wiki/Brainfuck)
+  * The C-code was compiled by GCC to produce an executable.
+* Then I started generating assembly-language code, which looked [something like this](https://github.com/skx/bfcc/blob/aebb14ccb548a2249bc32bb1f82fe9070518cc3c/main.go).
+  * The generated assembly was compiled by `nasm`, and linked with `ld` to produce an executable.
+* Once the assembly language code was working I optimized it.
+  * Collapsing multiple identical instructions to one.
+  * Improving the way loop-handling was generatoed.
+* Finally I cleaned up and improved the code.
+  * Implementing a separate lexer.
+  * Allowing the use of pluggable backends, so we could generate both C and Assembly Language output (but only one at a time).
 
-Annoyingly I noticed that when I compiled the Mandelbrot example via the assembly language version it was slower than the C-based version.  So I had some more things to do:
-
-* [x] Optimize the generated assembly language.
 
 
 
@@ -78,6 +93,9 @@ Annoyingly I noticed that when I compiled the Mandelbrot example via the assembl
 * Started work at 15:00 again.
   * Implemented trivial assembly language version by 15:30.
 * Spent another hour cleaning up comments, _this_ README.md file, and applying basic optimizations.
+* After that I slowly made improvements
+  * Adding a lexer in [#4](https://github.com/skx/bfcc/pull/4)
+  * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6)
 
 
 
@@ -91,59 +109,15 @@ You can run `make test` to run all the scripts, and compare their generated outp
 
 
 
-## Speed
-
-I've implemented two simple "compilers":
-
-* The first generated C code.
-  * This was then compiled via `gcc` (with `-O3`).
-* The second generated assembly language code.
-  * Compile via `nasm`, and linked with `ld`.
-
-The most complicated program I've run was the Mandelbrot generator, and surprisingly the runtime of the C-based version is faster:
-
-| Version  | RunTime |
-|----------|---------|
-| C        | 1.177s  |
-| Assembly | 2.694s  |
-
-
-Of course there are obvious optimizations to be made, which is why I structured the assembly language output as I did.  For example `>` is used to increase our index.  I compile `>` to `add r8, 1` as the R8 register is used for our index.
-
-However I compile "`>>>`" into "`add r8, 1; add r8, 1; add r8, 1` when instead I should compile it into `add r8,3`.  (i.e. I can collapse multiple identical instances of the increase/decrease instructions into a single instruction.)
-
-The final version of the C-generating version was:
-
-* [cadb19d6c75a5febde56f53423a9668ee8f6bd25](https://github.com/skx/bfcc/tree/cadb19d6c75a5febde56f53423a9668ee8f6bd25)
-
-The starting version of the assembly output was :
-
-* [aebb14ccb548a2249bc32bb1f82fe9070518cc3c](https://github.com/skx/bfcc/tree/aebb14ccb548a2249bc32bb1f82fe9070518cc3c)
-
-The optimized version was :
-
-* [91d6712bcb4b41e9fd963f60da2753d62ee789d1](https://github.com/skx/bfcc/commit/91d6712bcb4b41e9fd963f60da2753d62ee789d1)
-
-Finally I made another change to look for loop termination in the handler for `]`, to avoid unnecessary jumps
-
-* [88e2551fbafea7814de7fe6d7ef5df2b5a47abe2](https://github.com/skx/bfcc/tree/88e2551fbafea7814de7fe6d7ef5df2b5a47abe2)
-
-With that the timings become:
-
-| Version                | RunTime |
-|------------------------|---------|
-| C                      | 1.177s  |
-| Assembly               | 2.694s  |
-| Optimized Assembly     | 1.542s  |
-| JMP optimized assembly | 1.260s  |
-
-
 
 ## Future Plans?
 
-None.
+Mostly none.
 
 It might be cute to convert the assembly, such that `gcc` could compile it.  That would drop the `nasm` dependency, but it's not a big deal.  Patches welcome if you want to have a stab at it.
+
+Otherwise more backends might be nice, but I guess the two existing ones are the most obvious.  Due to the way the code is structured adding a new one would be trivial though.
+
 
 
 

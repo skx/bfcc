@@ -1,4 +1,4 @@
-package main
+package lexer
 
 import (
 	"testing"
@@ -15,8 +15,8 @@ func TestLexer(t *testing.T) {
 		{MINUS, 1},
 		{LESS, 5},
 		{GREATER, 5},
-		{LOOP_OPEN, 1},
-		{LOOP_CLOSE, 1},
+		{LOOPOPEN, 1},
+		{LOOPCLOSE, 1},
 		{OUTPUT, 1},
 		{INPUT, 1},
 		{EOF, 1},
