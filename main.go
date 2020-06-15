@@ -10,6 +10,9 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+
+	"github.com/skx/bfcc/generators"
+	"github.com/skx/bfcc/lexer"
 )
 
 // Given an input brainfuck program generate a comparable assembly version.
@@ -36,7 +39,7 @@ _start:
 	//
 	// Create a lexer for the input program
 	//
-	l := NewLexer(source)
+	l := lexer.NewLexer(source)
 
 	//
 	// Loop forever, processing the next token
@@ -55,40 +58,40 @@ _start:
 	// We'll process the complete program until
 	// we hit an end of file/input
 	//
-	for tok.Type != EOF {
+	for tok.Type != lexer.EOF {
 
 		//
 		// Output different things depending on the token-type
 		//
 		switch tok.Type {
 
-		case GREATER:
+		case lexer.GREATER:
 			buff.WriteString(fmt.Sprintf("  add r8, %d\n", tok.Repeat))
 
-		case LESS:
+		case lexer.LESS:
 			buff.WriteString(fmt.Sprintf("  sub r8, %d\n", tok.Repeat))
 
-		case PLUS:
+		case lexer.PLUS:
 			buff.WriteString(fmt.Sprintf("  add byte [r8], %d\n", tok.Repeat))
 
-		case MINUS:
+		case lexer.MINUS:
 			buff.WriteString(fmt.Sprintf("  sub byte [r8], %d\n", tok.Repeat))
 
-		case OUTPUT:
+		case lexer.OUTPUT:
 			buff.WriteString("  mov rax, 1\n")  // SYS_WRITE
 			buff.WriteString("  mov rdi, 1\n")  // STDOUT
 			buff.WriteString("  mov rsi, r8\n") // data-comes-here
 			buff.WriteString("  mov rdx, 1\n")  // one byte
 			buff.WriteString("  syscall\n")     // Syscall
 
-		case INPUT:
+		case lexer.INPUT:
 			buff.WriteString("  mov rax, 0\n")  // SYS_READ
 			buff.WriteString("  mov rdi, 0\n")  // STDIN
 			buff.WriteString("  mov rsi, r8\n") // Dest
 			buff.WriteString("  mov rdx, 1\n")  // one byte
 			buff.WriteString("  syscall\n")     // syscall
 
-		case LOOP_OPEN:
+		case lexer.LOOP_OPEN:
 
 			//
 			// Open of a block.
@@ -105,7 +108,7 @@ _start:
 			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
 			opens = append(opens, i)
 
-		case LOOP_CLOSE:
+		case lexer.LOOP_CLOSE:
 
 			// "]" can only follow an "[".
 			//
@@ -201,6 +204,13 @@ func main() {
 	run := flag.Bool("run", false, "Run the program after compiling.")
 	flag.Parse()
 
+	//
+	// Show our generators
+	//
+	all := generators.Available()
+	for i, n := range all {
+		fmt.Printf("%d %v\n", i, n)
+	}
 	//
 	// Get the input filename
 	//
