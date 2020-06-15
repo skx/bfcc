@@ -93,7 +93,7 @@ func (l *Lexer) Next() *Token {
 			//
 			// Some tokens can't repeat.  Horrid.
 			//
-			if char == LOOP_OPEN || char == LOOP_CLOSE {
+			if char == INPUT || char == OUTPUT || char == LOOP_OPEN || char == LOOP_CLOSE {
 				l.position++
 				return &Token{Type: char, Repeat: 1}
 			}
