@@ -36,6 +36,14 @@ _start:
 	buff.WriteString(programStart)
 
 	//
+	// Should we generate a debug-breakpoint?
+	//
+	debug := os.Getenv("DEBUG")
+	if debug == "1" {
+		buff.WriteString("  int3\n")
+	}
+
+	//
 	// Keep track of "[" here.
 	//
 	// These are loop opens.

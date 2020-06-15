@@ -8,6 +8,7 @@ Table of Contents
    * [Usage](#usage)
    * [My Approach](#my-approach)
    * [Timeline](#timeline)
+      * [Debugging the generated program](#debugging-the-generated-program)
    * [Test Programs](#test-programs)
    * [Future Plans?](#future-plans)
    * [Bug Reports?](#bug-reports)
@@ -96,6 +97,50 @@ In the end it took me about four hours to get something I was happy with, and la
 * After that I slowly made improvements
   * Adding a lexer in [#4](https://github.com/skx/bfcc/pull/4)
   * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6)
+  * Allow generating a breakpoint instruction when using the assembly-backend in [#7](https://github.com/skx/bfcc/pull/7).
+
+
+### Debugging the generated program
+
+If you run the compiler with the `-debug` flag a breakpoint will be generated
+immediately at the start of the program.  You can use that breakpoint to easily
+debug the generated binary via `gdb`.
+
+    $ bfcc -debug ./examples/hello-world.bf
+
+Now you can launch that binary under `gdb`, and run it:
+
+    $ gdb ./a.out
+    (gdb) run
+    ..
+    Program received signal SIGTRAP, Trace/breakpoint trap.
+    0x00000000004000bb in _start ()
+
+Disassemble the code via `disassemble`, and step over instructions one at a time via `stepi`.  If your program is long you might see a lot of output from the `disassemble` step.
+
+    (gdb) disassemble
+    Dump of assembler code for function _start:
+       0x00000000004000b0 <+0>:	movabs $0x600290,%r8
+       0x00000000004000ba <+10>:	int3
+    => 0x00000000004000bb <+11>:	addb   $0x8,(%r8)
+       0x00000000004000bf <+15>:	cmpb   $0x0,(%r8)
+       0x00000000004000c3 <+19>:	je     0x40013f <close_loop_1>
+    End of assembler dump.
+
+You can set a breakpoint at a line in the future, and continue running till
+you hit it, with something like this:
+
+     (gdb) break *0x00000000004000c3
+     (gdb) cont
+
+Once there inspect the registers with commands like these two:
+
+     (gdb) print $r8
+     (gdb) print *$r8
+     (gdb) info registers
+
+Further documentation can be found in the `gdb` manual, which is worth reading
+if you've an interest in compilers, debuggers, and decompilers.
 
 
 
