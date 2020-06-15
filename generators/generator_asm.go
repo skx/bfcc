@@ -27,11 +27,13 @@ type GeneratorASM struct {
 func (g *GeneratorASM) generateSource() error {
 	var buff bytes.Buffer
 	var programStart = `
-global _start
-section .text
+.intel_syntax noprefix
 
-_start:
-  mov r8, stack
+.global main
+
+
+main:
+  lea %r8, stack
 `
 	buff.WriteString(programStart)
 
@@ -80,30 +82,30 @@ _start:
 		switch tok.Type {
 
 		case lexer.GREATER:
-			buff.WriteString(fmt.Sprintf("  add r8, %d\n", tok.Repeat))
+			buff.WriteString(fmt.Sprintf("  add  %%r8, %d\n", tok.Repeat))
 
 		case lexer.LESS:
-			buff.WriteString(fmt.Sprintf("  sub r8, %d\n", tok.Repeat))
+			buff.WriteString(fmt.Sprintf("  sub %%r8, %d\n", tok.Repeat))
 
 		case lexer.PLUS:
-			buff.WriteString(fmt.Sprintf("  add byte [r8], %d\n", tok.Repeat))
+			buff.WriteString(fmt.Sprintf("  add byte ptr [%%r8], %d\n", tok.Repeat))
 
 		case lexer.MINUS:
-			buff.WriteString(fmt.Sprintf("  sub byte [r8], %d\n", tok.Repeat))
+			buff.WriteString(fmt.Sprintf("  sub byte ptr [%%r8], %d\n", tok.Repeat))
 
 		case lexer.OUTPUT:
-			buff.WriteString("  mov rax, 1\n")  // SYS_WRITE
-			buff.WriteString("  mov rdi, 1\n")  // STDOUT
-			buff.WriteString("  mov rsi, r8\n") // data-comes-here
-			buff.WriteString("  mov rdx, 1\n")  // one byte
-			buff.WriteString("  syscall\n")     // Syscall
+			buff.WriteString("  mov %rax, 1\n")   // SYS_WRITE
+			buff.WriteString("  mov %rdi, 1\n")   // STDOUT
+			buff.WriteString("  mov %rsi, %r8\n") // data-comes-here
+			buff.WriteString("  mov %rdx, 1\n")   // one byte
+			buff.WriteString("  syscall\n")       // Syscall
 
 		case lexer.INPUT:
-			buff.WriteString("  mov rax, 0\n")  // SYS_READ
-			buff.WriteString("  mov rdi, 0\n")  // STDIN
-			buff.WriteString("  mov rsi, r8\n") // Dest
-			buff.WriteString("  mov rdx, 1\n")  // one byte
-			buff.WriteString("  syscall\n")     // syscall
+			buff.WriteString("  mov %rax, 0\n")   // SYS_READ
+			buff.WriteString("  mov %rdi, 0\n")   // STDIN
+			buff.WriteString("  mov %rsi, %r8\n") // Dest
+			buff.WriteString("  mov %rdx, 1\n")   // one byte
+			buff.WriteString("  syscall\n")       // syscall
 
 		case lexer.LOOPOPEN:
 
@@ -117,7 +119,7 @@ _start:
 			// loop so the label here is AFTER our condition
 			//
 			i++
-			buff.WriteString("  cmp byte [r8], 0\n")
+			buff.WriteString("  cmp byte ptr [%r8], 0\n")
 			buff.WriteString(fmt.Sprintf("  je close_loop_%d\n", i))
 			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
 			opens = append(opens, i)
@@ -168,7 +170,7 @@ _start:
 			// test at the start of the loop, because
 			// running it twice would be pointless.
 			//
-			buff.WriteString("  cmp byte [r8], 0\n")
+			buff.WriteString("  cmp byte ptr [r8], 0\n")
 
 			buff.WriteString(fmt.Sprintf("  jne label_loop_%d\n", last))
 			buff.WriteString(fmt.Sprintf("close_loop_%d:\n", last))
@@ -185,13 +187,15 @@ _start:
 	}
 
 	// terminate
-	buff.WriteString("  mov rax, 60\n")
-	buff.WriteString("  mov rdi, 0\n")
+	buff.WriteString("  mov %rax, 60\n")
+	buff.WriteString("  mov %rdi, 0\n")
 	buff.WriteString("  syscall\n")
 
-	// program-area
-	buff.WriteString("section .bss\n")
-	buff.WriteString("stack: resb 300000\n")
+	buff.WriteString(".bss\n")
+	buff.WriteString("stack:\n")
+	buff.WriteString(".rept 30000\n")
+	buff.WriteString(" .byte 0x0\n")
+	buff.WriteString(".endr\n")
 
 	// Output to a file
 	err := ioutil.WriteFile(g.output+".s", buff.Bytes(), 0644)
@@ -200,22 +204,12 @@ _start:
 
 func (g *GeneratorASM) compileSource() error {
 
-	// nasm to compile to object-code
-	nasm := exec.Command("nasm", "-f", "elf64", "-o", g.output+".o", g.output+".s")
-	nasm.Stdout = os.Stdout
-	nasm.Stderr = os.Stderr
+	// Use gcc to compile our object-code
+	gcc := exec.Command("gcc", "-o", g.output, "-static", g.output+".s")
+	gcc.Stdout = os.Stdout
+	gcc.Stderr = os.Stderr
 
-	err := nasm.Run()
-	if err != nil {
-		return err
-	}
-
-	// ld to link to an executable
-	ld := exec.Command("ld", "-m", "elf_x86_64", "-o", g.output, g.output+".o")
-	ld.Stdout = os.Stdout
-	ld.Stderr = os.Stderr
-
-	err = ld.Run()
+	err := gcc.Run()
 	if err != nil {
 		return err
 	}
