@@ -19,14 +19,14 @@ const (
 	//
 	// Are there standard values?
 	//
-	LESS       = "<"
-	GREATER    = ">"
-	PLUS       = "+"
-	MINUS      = "-"
-	OUTPUT     = "."
-	INPUT      = ","
-	LOOP_OPEN  = "["
-	LOOP_CLOSE = "]"
+	LESS      = "<"
+	GREATER   = ">"
+	PLUS      = "+"
+	MINUS     = "-"
+	OUTPUT    = "."
+	INPUT     = ","
+	LOOPOPEN  = "["
+	LOOPCLOSE = "]"
 )
 
 // Token contains the next token from the input program.
@@ -75,8 +75,8 @@ func NewLexer(input string) *Lexer {
 	l.known["<"] = LESS
 	l.known[","] = INPUT
 	l.known["."] = OUTPUT
-	l.known["["] = LOOP_OPEN
-	l.known["]"] = LOOP_CLOSE
+	l.known["["] = LOOPOPEN
+	l.known["]"] = LOOPCLOSE
 
 	return l
 }
@@ -101,7 +101,7 @@ func (l *Lexer) Next() *Token {
 			//
 			// Some tokens can't repeat.  Horrid.
 			//
-			if char == INPUT || char == OUTPUT || char == LOOP_OPEN || char == LOOP_CLOSE {
+			if char == INPUT || char == OUTPUT || char == LOOPOPEN || char == LOOPCLOSE {
 				l.position++
 				return &Token{Type: char, Repeat: 1}
 			}

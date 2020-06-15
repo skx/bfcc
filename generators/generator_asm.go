@@ -97,7 +97,7 @@ _start:
 			buff.WriteString("  mov rdx, 1\n")  // one byte
 			buff.WriteString("  syscall\n")     // syscall
 
-		case lexer.LOOP_OPEN:
+		case lexer.LOOPOPEN:
 
 			//
 			// Open of a block.
@@ -114,7 +114,7 @@ _start:
 			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
 			opens = append(opens, i)
 
-		case lexer.LOOP_CLOSE:
+		case lexer.LOOPCLOSE:
 
 			// "]" can only follow an "[".
 			//
