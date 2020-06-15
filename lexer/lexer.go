@@ -51,6 +51,10 @@ type Lexer struct {
 
 	// simple map of single-character tokens to their type
 	known map[string]string
+
+	// simple map which allows us to determine if a token can
+	// have repeated occurences collapsed.
+	repeat map[string]bool
 }
 
 // New creates a new Lexer, which will parse the specified
@@ -65,10 +69,8 @@ func New(input string) *Lexer {
 	l.input = strings.ReplaceAll(l.input, "\r", "")
 	l.input = strings.ReplaceAll(l.input, " ", "")
 
-	// Populate the simple token-types in a map for
-	// later use.
+	// Populate the simple token-types in a map for later use.
 	l.known = make(map[string]string)
-
 	l.known["+"] = PLUS
 	l.known["-"] = MINUS
 	l.known[">"] = GREATER
@@ -77,6 +79,14 @@ func New(input string) *Lexer {
 	l.known["."] = OUTPUT
 	l.known["["] = LOOPOPEN
 	l.known["]"] = LOOPCLOSE
+
+	// Some characters will have their input collapsed
+	// when multiple consecutive occurrences are found.
+	l.repeat = make(map[string]bool)
+	l.repeat["+"] = true
+	l.repeat["-"] = true
+	l.repeat[">"] = true
+	l.repeat["<"] = true
 
 	return l
 }
@@ -99,18 +109,29 @@ func (l *Lexer) Next() *Token {
 		if ok {
 
 			//
-			// Some tokens can't repeat.  Horrid.
+			// Can this token be repeated?
 			//
-			if char == INPUT || char == OUTPUT || char == LOOPOPEN || char == LOOPCLOSE {
+			// If not just return this single instance.
+			//
+			repeated := l.repeat[char]
+			if !repeated {
 				l.position++
 				return &Token{Type: char, Repeat: 1}
 			}
 
-			// OK record our starting position
+			//
+			// OK we've found a character, such as "<",
+			// which can be repeated multiple times.
+			//
+			// We count how many times that repetition
+			// occurs, swallowing that input as we go.
+			//
+
+			// Record our starting position
 			begin := l.position
 
-			// Loop forward to see if that character
-			// is repeated further times
+			// Loop forward to see how many times the character
+			// is repeated.
 			for l.position < len(l.input) {
 
 				// If it isn't the same character
