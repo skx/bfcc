@@ -4,6 +4,11 @@ package main
 const (
 	EOF = "EOF"
 
+	//
+	// TODO: Better names.
+	//
+	// Are there standard values?
+	//
 	LESS       = "<"
 	GREATER    = ">"
 	PLUS       = "+"
@@ -78,6 +83,14 @@ func (l *Lexer) Next() *Token {
 		_, ok := l.known[char]
 		if ok {
 
+			//
+			// Some tokens can't repeat.  Horrid.
+			//
+			if char == LOOP_OPEN || char == LOOP_CLOSE {
+				l.position++
+				return &Token{Type: char, Repeat: 1}
+			}
+
 			// OK record our starting position
 			begin := l.position
 
@@ -104,6 +117,7 @@ func (l *Lexer) Next() *Token {
 		//
 		// Here we're ignoring a token which was unknown.
 		//
+		l.position++
 	}
 
 	//

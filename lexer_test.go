@@ -21,7 +21,7 @@ func TestLexer(t *testing.T) {
 		{EOF, 1},
 	}
 
-	l := NewLexer("+-<<<<<>>>>>[].,")
+	l := NewLexer("+-<<<<<\n>>>>>[].,")
 
 	for i, tt := range tests {
 		tok := l.Next()

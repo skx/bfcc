@@ -33,55 +33,62 @@ _start:
 	//
 	opens := []int{}
 
+	//
+	// Create a lexer for the input program
+	//
+	l := NewLexer(source)
+
+	//
+	// Loop forever, processing the next token
+	//
+	tok := l.Next()
+
+	//
+	// We keep track of the loop-labels here.
+	//
+	// Each time we see a new loop-open "[" we bump this
+	// by one.
+	//
 	i := 0
-	ln := len(source)
 
-	for i < ln {
+	//
+	// We'll process the complete program until
+	// we hit an end of file/input
+	//
+	for tok.Type != EOF {
 
-		switch source[i] {
-		case '>':
-			end := i
-			for source[end] == '>' {
-				end++
-			}
-			buff.WriteString(fmt.Sprintf("  add r8, %d\n", end-i))
-			i = end - 1
-		case '<':
-			end := i
-			for source[end] == '<' {
-				end++
-			}
-			buff.WriteString(fmt.Sprintf("  sub r8, %d\n", end-i))
-			i = end - 1
-		case '+':
-			end := i
-			for source[end] == '+' {
-				end++
-			}
-			buff.WriteString(fmt.Sprintf("  add byte [r8], %d\n", end-i))
-			i = end - 1
-		case '-':
-			end := i
-			for source[end] == '-' {
-				end++
-			}
-			buff.WriteString(fmt.Sprintf("  sub byte [r8], %d\n", end-i))
-			i = end - 1
-		case '.':
-			// output
+		//
+		// Output different things depending on the token-type
+		//
+		switch tok.Type {
+
+		case GREATER:
+			buff.WriteString(fmt.Sprintf("  add r8, %d\n", tok.Repeat))
+
+		case LESS:
+			buff.WriteString(fmt.Sprintf("  sub r8, %d\n", tok.Repeat))
+
+		case PLUS:
+			buff.WriteString(fmt.Sprintf("  add byte [r8], %d\n", tok.Repeat))
+
+		case MINUS:
+			buff.WriteString(fmt.Sprintf("  sub byte [r8], %d\n", tok.Repeat))
+
+		case OUTPUT:
 			buff.WriteString("  mov rax, 1\n")  // SYS_WRITE
 			buff.WriteString("  mov rdi, 1\n")  // STDOUT
 			buff.WriteString("  mov rsi, r8\n") // data-comes-here
 			buff.WriteString("  mov rdx, 1\n")  // one byte
 			buff.WriteString("  syscall\n")     // Syscall
-		case ',':
-			// input
+
+		case INPUT:
 			buff.WriteString("  mov rax, 0\n")  // SYS_READ
 			buff.WriteString("  mov rdi, 0\n")  // STDIN
 			buff.WriteString("  mov rsi, r8\n") // Dest
 			buff.WriteString("  mov rdx, 1\n")  // one byte
 			buff.WriteString("  syscall\n")     // syscall
-		case '[':
+
+		case LOOP_OPEN:
 
 			//
 			// Open of a block.
@@ -92,11 +99,14 @@ _start:
 			// NOTE: We repeat the test at the end of the
 			// loop so the label here is AFTER our condition
 			//
+			i++
 			buff.WriteString("  cmp byte [r8], 0\n")
 			buff.WriteString(fmt.Sprintf("  je close_loop_%d\n", i))
 			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
 			opens = append(opens, i)
-		case ']':
+
+		case LOOP_CLOSE:
+
 			// "]" can only follow an "[".
 			//
 			// Every time we see a "[" we save the ID onto a
@@ -105,6 +115,10 @@ _start:
 			//
 			// This will cope with nesting.
 			//
+			if len(opens) < 1 {
+				fmt.Printf("close before open.  bug?  bogus program?\n")
+				os.Exit(1)
+			}
 
 			//
 			// Get the last label-ID
@@ -141,9 +155,16 @@ _start:
 
 			buff.WriteString(fmt.Sprintf("  jne label_loop_%d\n", last))
 			buff.WriteString(fmt.Sprintf("close_loop_%d:\n", last))
+
+		default:
+			fmt.Printf("token not handled: %v\n", tok)
+			os.Exit(1)
 		}
 
-		i++
+		//
+		// Keep processing
+		//
+		tok = l.Next()
 	}
 
 	// terminate
