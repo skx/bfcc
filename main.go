@@ -20,6 +20,7 @@ func main() {
 	//
 	backend := flag.String("backend", "asm", "The backend to use for compilation.")
 	cleanup := flag.Bool("cleanup", true, "Remove the generated files after creation.")
+	debug := flag.Bool("debug", false, "Insert a debugging-breakpoint in the generated file, if possible.")
 	run := flag.Bool("run", false, "Run the program after compiling.")
 	flag.Parse()
 
@@ -69,6 +70,17 @@ func main() {
 		os.Setenv("CLEANUP", "1")
 	} else {
 		os.Setenv("CLEANUP", "0")
+	}
+
+	//
+	// Will we setup a debug-breakpoint?
+	//
+	// This only makes sense for the ASM-backend.
+	//
+	if *debug {
+		os.Setenv("DEBUG", "1")
+	} else {
+		os.Setenv("DEBUG", "0")
 	}
 
 	//
