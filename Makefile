@@ -28,7 +28,8 @@ test-c:
 test-implementation:
 	@for i in examples/*.bf; do \
 		echo -n "Running test [backend: $$BACKEND] $$i " ; \
-		./bfcc -backend=${BACKEND} -run $$i > x; \
+		./bfcc -backend=${BACKEND} $$i ; \
+		./a.out > x; \
 		nm=$$(basename $$i .bf) ;\
 		diff examples/$${nm}.out x || ( echo "Example failed: $$i"; exit 1 ) ;\
 		echo "OK" ; \
