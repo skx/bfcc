@@ -28,7 +28,7 @@ func (g *GeneratorASM) generateSource() error {
 	var buff bytes.Buffer
 	var programStart = `
 .intel_syntax noprefix
-.global main
+.global _start
 
 write_to_stdout:
   mov %rax, 1
@@ -46,7 +46,7 @@ read_from_stdin:
   syscall
   ret
 
-main:
+_start:
   lea %r8, stack
 `
 	buff.WriteString(programStart)
@@ -211,7 +211,7 @@ main:
 func (g *GeneratorASM) compileSource() error {
 
 	// Use gcc to compile our object-code
-	gcc := exec.Command("gcc", "-o", g.output, "-static", g.output+".s")
+	gcc := exec.Command("gcc", "-static", "-fPIC", "-nostdlib", "-nostartfiles", "-nodefaultlibs", "-o", g.output, g.output+".s")
 	gcc.Stdout = os.Stdout
 	gcc.Stderr = os.Stderr
 
