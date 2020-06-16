@@ -60,7 +60,7 @@ You may use the `-backend` flag to specify the backend which you prefer to use:
 You'll see slightly difference sizes in the two executable:
 
     $ ls -lash mb-*
-    76K -rwxr-xr-x 1 skx skx 73K Jun 16 14:54 mb-asm
+    24K -rwxr-xr-x 1 skx skx 21K Jun 16 14:54 mb-asm
     36K -rwxr-xr-x 1 skx skx 34K Jun 16 14:54 mb-c
 
 But both should work identically; if they do not that's a bug in the generated C/assembly source files I've generated!
