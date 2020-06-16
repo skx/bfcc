@@ -48,7 +48,7 @@ Finally if you prefer you can specify an output name for the compiled result:
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
     $ ./bf
 
-There are two backends included, one generates an assembly language source-file, and compiles with `gcc`, and the other generates C-code which is also compiled via `gcc`.
+There are three backends included, one generates an assembly language source-file, and compiles with `gcc`, one generates C-code which is also compiled via `gcc`, and a final back-end interpreters Brainfuck programs.
 
 By default the assembly-language backend is selected, because this is the thing that I was more interested in writing.
 
@@ -63,8 +63,12 @@ You'll see slightly difference sizes in the two executable:
     24K -rwxr-xr-x 1 skx skx 21K Jun 16 14:54 mb-asm
     36K -rwxr-xr-x 1 skx skx 34K Jun 16 14:54 mb-c
 
-But both should work identically; if they do not that's a bug in the generated C/assembly source files I've generated!
+But both compiling backends should work identically; if they do not that's a bug in the generated C/assembly source files I've generated!
 
+The interpreter backend is only included to show how much faster compilation is than interpreting.  The mandelbrot example takes almost two minutes upon my system, whereas the compiled version takes 1.2 seconds!
+
+    $ ./bfcc -backend=interpreter ./examples/hello-world.bf
+    Hello World!
 
 
 
