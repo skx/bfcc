@@ -31,3 +31,6 @@ echo "Completed shadowed-variable check .."
 
 # Run golang tests
 go test ./...
+
+# Run the actual test-cases
+make test
