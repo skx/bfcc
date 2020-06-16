@@ -73,15 +73,15 @@ But both should work identically; if they do not that's a bug in the generated C
 In the end it took me about four hours to get something I was happy with, and later I've improved it a little more:
 
 * Initially I generated C-code, [as you can see here](https://github.com/skx/bfcc/blob/cadb19d6c75a5febde56f53423a9668ee8f6bd25/main.go).
-  * This code was largely inspired by the [wikipedia brainfuck page](https://en.wikipedia.org/wiki/Brainfuck)
+  * This code was largely inspired by the [Wikipedia brainfuck page](https://en.wikipedia.org/wiki/Brainfuck).
   * The C-code was compiled by GCC to produce an executable.
 * Then I started generating assembly-language code, which looked [something like this](https://github.com/skx/bfcc/blob/aebb14ccb548a2249bc32bb1f82fe9070518cc3c/main.go).
   * The generated assembly was compiled by `nasm`, and linked with `ld` to produce an executable.
 * Once the assembly language code was working I optimized it.
   * Collapsing multiple identical instructions to one.
-  * Improving the way loop-handling was generatoed.
+  * Improving the way loop-handling was generated.
 * Finally I cleaned up and improved the code.
-  * Implementing a separate lexer.
+  * Implemented a separate lexer.
   * Allowing the use of pluggable backends, so we could generate both C and Assembly Language output (but only one at a time).
   * Started using `gcc` to compile our assembly, to drop the dependency upon `nasm`.
 
