@@ -95,23 +95,23 @@ _start:
 		//
 		switch tok.Type {
 
-		case lexer.GREATER:
+		case lexer.INC_PTR:
 			buff.WriteString(fmt.Sprintf("  add  %%r8, %d\n", tok.Repeat))
 
-		case lexer.LESS:
+		case lexer.DEC_PTR:
 			buff.WriteString(fmt.Sprintf("  sub %%r8, %d\n", tok.Repeat))
 
-		case lexer.PLUS:
+		case lexer.INC_CELL:
 			buff.WriteString(fmt.Sprintf("  add byte ptr [%%r8], %d\n", tok.Repeat))
 
-		case lexer.MINUS:
+		case lexer.DEC_CELL:
 			buff.WriteString(fmt.Sprintf("  sub byte ptr [%%r8], %d\n", tok.Repeat))
 
 		case lexer.OUTPUT:
 			buff.WriteString("  call write_to_stdout\n")
 		case lexer.INPUT:
 			buff.WriteString("  call read_from_stdin\n")
-		case lexer.LOOPOPEN:
+		case lexer.LOOP_OPEN:
 
 			//
 			// Open of a block.
@@ -128,7 +128,7 @@ _start:
 			buff.WriteString(fmt.Sprintf("label_loop_%d:\n", i))
 			opens = append(opens, i)
 
-		case lexer.LOOPCLOSE:
+		case lexer.LOOP_CLOSE:
 
 			// "]" can only follow an "[".
 			//

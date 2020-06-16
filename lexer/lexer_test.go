@@ -11,12 +11,12 @@ func TestLexer(t *testing.T) {
 		expectedType  string
 		expectedCount int
 	}{
-		{PLUS, 1},
-		{MINUS, 1},
-		{LESS, 5},
-		{GREATER, 5},
-		{LOOPOPEN, 1},
-		{LOOPCLOSE, 1},
+		{INC_CELL, 1},
+		{DEC_CELL, 1},
+		{DEC_PTR, 5},
+		{INC_PTR, 5},
+		{LOOP_OPEN, 1},
+		{LOOP_CLOSE, 1},
 		{OUTPUT, 1},
 		{INPUT, 1},
 		{EOF, 1},
@@ -43,8 +43,8 @@ func TestAdjacent(t *testing.T) {
 		expectedType  string
 		expectedCount int
 	}{
-		{PLUS, 5},
-		{MINUS, 5},
+		{INC_CELL, 5},
+		{DEC_CELL, 5},
 		{EOF, 1},
 	}
 

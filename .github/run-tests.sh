@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Install tools to test our code-quality.
-go get -u golang.org/x/lint/golint
 go get -u golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow
 go get -u honnef.co/go/tools/cmd/staticcheck
 
-# Run the static-check tool - we ignore errors in goserver/static.go
+# At this point failures cause aborts
+set -e
+
+# Run the static-check tool
 t=$(mktemp)
 staticcheck -checks all ./... > $t
 if [ -s $t ]; then
@@ -15,14 +17,6 @@ if [ -s $t ]; then
     exit 1
 fi
 rm $t
-
-# At this point failures cause aborts
-set -e
-
-# Run the linter
-echo "Launching linter .."
-golint -set_exit_status ./...
-echo "Completed linter .."
 
 # Run the shadow-checker
 echo "Launching shadowed-variable check .."

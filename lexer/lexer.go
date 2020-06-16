@@ -1,3 +1,5 @@
+//lint:file-ignore ST1003 Ignore all-caps because this is fine.
+
 // Package lexer is a simple lexer for processing BrainFuck programs.
 //
 // A given program will be parsed into a series of tokens, with unrecognized
@@ -14,19 +16,17 @@ import "strings"
 const (
 	EOF = "EOF"
 
-	//
-	// TODO: Better names.
-	//
-	// Are there standard values?
-	//
-	LESS      = "<"
-	GREATER   = ">"
-	PLUS      = "+"
-	MINUS     = "-"
-	OUTPUT    = "."
-	INPUT     = ","
-	LOOPOPEN  = "["
-	LOOPCLOSE = "]"
+	DEC_PTR = "<"
+	INC_PTR = ">"
+
+	INC_CELL = "+"
+	DEC_CELL = "-"
+
+	OUTPUT = "."
+	INPUT  = ","
+
+	LOOP_OPEN  = "["
+	LOOP_CLOSE = "]"
 )
 
 // Token contains the next token from the input program.
@@ -71,14 +71,14 @@ func New(input string) *Lexer {
 
 	// Populate the simple token-types in a map for later use.
 	l.known = make(map[string]string)
-	l.known["+"] = PLUS
-	l.known["-"] = MINUS
-	l.known[">"] = GREATER
-	l.known["<"] = LESS
+	l.known["+"] = INC_CELL
+	l.known["-"] = DEC_CELL
+	l.known[">"] = INC_PTR
+	l.known["<"] = DEC_PTR
 	l.known[","] = INPUT
 	l.known["."] = OUTPUT
-	l.known["["] = LOOPOPEN
-	l.known["]"] = LOOPCLOSE
+	l.known["["] = LOOP_OPEN
+	l.known["]"] = LOOP_CLOSE
 
 	// Some characters will have their input collapsed
 	// when multiple consecutive occurrences are found.

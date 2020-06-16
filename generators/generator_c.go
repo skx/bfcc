@@ -58,30 +58,22 @@ int main (int arc, char *argv[]) {
 		//
 		switch tok.Type {
 
-		case lexer.GREATER:
+		case lexer.INC_PTR:
 			buff.WriteString(fmt.Sprintf("  idx += %d;\n", tok.Repeat))
-
-		case lexer.LESS:
+		case lexer.DEC_PTR:
 			buff.WriteString(fmt.Sprintf("  idx -= %d;\n", tok.Repeat))
-
-		case lexer.PLUS:
+		case lexer.INC_CELL:
 			buff.WriteString(fmt.Sprintf("  array[idx] += %d;\n", tok.Repeat))
-
-		case lexer.MINUS:
+		case lexer.DEC_CELL:
 			buff.WriteString(fmt.Sprintf("  array[idx] -= %d;\n", tok.Repeat))
-
 		case lexer.OUTPUT:
 			buff.WriteString("  putchar(array[idx]);\n")
-
 		case lexer.INPUT:
 			buff.WriteString("  array[idx] = getchar();\n")
-
-		case lexer.LOOPOPEN:
+		case lexer.LOOP_OPEN:
 			buff.WriteString("  while (array[idx]) {\n")
-
-		case lexer.LOOPCLOSE:
+		case lexer.LOOP_CLOSE:
 			buff.WriteString("}\n")
-
 		default:
 			fmt.Printf("token not handled: %v\n", tok)
 			os.Exit(1)
