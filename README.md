@@ -48,7 +48,15 @@ Finally if you prefer you can specify an output name for the compiled result:
     $ bfcc [-run] ./examples/bizzfuzz.bf ./bf
     $ ./bf
 
-There are three backends included, one generates an assembly language source-file, and compiles with `gcc`, one generates C-code which is also compiled via `gcc`, and a final back-end interpreters Brainfuck programs.
+There are three backends included:
+
+* `asm`
+  * Generates an assembly language source-file, and compiles with `gcc`
+* `c`
+  * Generates C-code which is also compiled via `gcc`.
+* `interpreter`
+  * This actually executes Brainfuck programs, and does zero compilation.
+
 
 By default the assembly-language backend is selected, because this is the thing that I was more interested in writing.
 
