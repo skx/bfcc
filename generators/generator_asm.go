@@ -220,6 +220,18 @@ func (g *GeneratorASM) compileSource() error {
 		return err
 	}
 
+	// Strip the binary - unless compiling for debug-usage
+	debug := os.Getenv("DEBUG")
+	if debug == "0" {
+		strip := exec.Command("strip", g.output)
+		strip.Stdout = os.Stdout
+		strip.Stderr = os.Stderr
+
+		err = strip.Run()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
