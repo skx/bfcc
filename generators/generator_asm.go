@@ -30,6 +30,22 @@ func (g *GeneratorASM) generateSource() error {
 .intel_syntax noprefix
 .global main
 
+write_to_stdout:
+  mov %rax, 1
+  mov %rdi, 1
+  mov %rsi, %r8
+  mov %rdx, 1
+  syscall
+  ret
+
+read_from_stdin:
+  mov %rax, 0
+  mov %rdi, 0
+  mov %rsi, %r8
+  mov %rdx, 1
+  syscall
+  ret
+
 main:
   lea %r8, stack
 `
@@ -92,19 +108,9 @@ main:
 			buff.WriteString(fmt.Sprintf("  sub byte ptr [%%r8], %d\n", tok.Repeat))
 
 		case lexer.OUTPUT:
-			buff.WriteString("  mov %rax, 1\n")   // SYS_WRITE
-			buff.WriteString("  mov %rdi, 1\n")   // STDOUT
-			buff.WriteString("  mov %rsi, %r8\n") // data-comes-here
-			buff.WriteString("  mov %rdx, 1\n")   // one byte
-			buff.WriteString("  syscall\n")       // Syscall
-
+			buff.WriteString("  call write_to_stdout\n")
 		case lexer.INPUT:
-			buff.WriteString("  mov %rax, 0\n")   // SYS_READ
-			buff.WriteString("  mov %rdi, 0\n")   // STDIN
-			buff.WriteString("  mov %rsi, %r8\n") // Dest
-			buff.WriteString("  mov %rdx, 1\n")   // one byte
-			buff.WriteString("  syscall\n")       // syscall
-
+			buff.WriteString("  call read_from_stdin\n")
 		case lexer.LOOPOPEN:
 
 			//
