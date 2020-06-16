@@ -114,6 +114,7 @@ In the end it took me about four hours to get something I was happy with, and la
   * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6)
   * Allow generating a breakpoint instruction when using the assembly-backend in [#7](https://github.com/skx/bfcc/pull/7).
   * Switched to generating assembly to be compiled by `gcc` rather than `nasm` [#8](https://github.com/skx/bfcc/pull/8).
+  * Added an interpreter in [#11](https://github.com/skx/bfcc/pull/12).
 
 
 
