@@ -71,7 +71,7 @@ You'll see slightly difference sizes in the two executable:
     24K -rwxr-xr-x 1 skx skx 21K Jun 16 14:54 mb-asm
     36K -rwxr-xr-x 1 skx skx 34K Jun 16 14:54 mb-c
 
-But both compiling backends should work identically; if they do not that's a bug in the generated C/assembly source files I've generated!
+Both compiling-backends should produce binaries that are standalone, and work identically - if they do not that's a bug in the code-generation.
 
 The interpreter backend is only included to show how much faster compilation is than interpreting.  The mandelbrot example takes almost two minutes upon my system, whereas the compiled version takes 1.2 seconds!
 
@@ -120,9 +120,10 @@ In the end it took me about four hours to get something I was happy with, and la
 
 ### Debugging the generated program
 
-If you run the compiler with the `-debug` flag a breakpoint will be generated
-immediately at the start of the program.  You can use that breakpoint to easily
-debug the generated binary via `gdb`.
+If you run the compiler with the `-debug` flag, using the assembly-language
+backend, a breakpoint will be generated immediately at the start of the
+program.  You can use that breakpoint to easily debug the generated binary
+via `gdb`.
 
     $ bfcc -debug ./examples/hello-world.bf
 
