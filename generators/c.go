@@ -96,7 +96,7 @@ int main (int arc, char *argv[]) {
 // compileSource uses gcc to compile the generated source-code
 func (c *GeneratorC) compileSource() error {
 
-	gcc := exec.Command("gcc", "-O3", "-Ofast", "-o", c.output, c.output+".c")
+	gcc := exec.Command("gcc", "-static", "-O3", "-s", "-o", c.output, c.output+".c")
 	gcc.Stdout = os.Stdout
 	gcc.Stderr = os.Stderr
 
