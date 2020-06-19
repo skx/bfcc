@@ -89,8 +89,10 @@ In the end it took me about four hours to get something I was happy with, and la
 * Then I started generating assembly-language code, which looked [something like this](https://github.com/skx/bfcc/blob/aebb14ccb548a2249bc32bb1f82fe9070518cc3c/main.go).
   * The generated assembly was compiled by `nasm`, and linked with `ld` to produce an executable.
 * Once the assembly language code was working I optimized it.
-  * Collapsing multiple identical instructions to one.
+  * Collapsing multiple identical instructions to one, which looked [like this](https://github.com/skx/bfcc/blob/91d6712bcb4b41e9fd963f60da2753d62ee789d1/main.go).
+    * This was buggy, but that wasn't obvious at the time!
   * Improving the way loop-handling was generated.
+    * This looked [like this](https://github.com/skx/bfcc/blob/88e2551fbafea7814de7fe6d7ef5df2b5a47abe2/main.go), and was designed to test the condition at the _end_ of the loop, as well as at the start.  The expectation being the comparison would be branch-predicted, and that would be cheaper for the processor than an extra unconditional jump each iteration.
 * Finally I cleaned up and improved the code.
   * Adding a lexer in [#4](https://github.com/skx/bfcc/pull/4)
   * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6), via the addition of a backend-abstraction.
