@@ -9,9 +9,8 @@ Table of Contents
 * [BrainFuck Compiler Challenge](#brainfuck-compiler-challenge)
    * [Usage](#usage)
    * [My Approach](#my-approach)
-   * [Timeline](#timeline)
-      * [Debugging the generated program](#debugging-the-generated-program)
    * [Test Programs](#test-programs)
+      * [Debugging the generated program](#debugging-the-generated-program)
    * [Future Plans?](#future-plans)
    * [Bug Reports?](#bug-reports)
    * [Github Setup](#github-setup)
@@ -93,28 +92,21 @@ In the end it took me about four hours to get something I was happy with, and la
   * Collapsing multiple identical instructions to one.
   * Improving the way loop-handling was generated.
 * Finally I cleaned up and improved the code.
-  * Implemented a separate lexer.
-  * Allowing the use of pluggable backends, so we could generate both C and Assembly Language output (but only one at a time).
-  * Started using `gcc` to compile our assembly, to drop the dependency upon `nasm`.
-
-
-
-## Timeline
-
-* Project occurred to me overnight.
-* Started work at 12:00.
-  * Generated initial version of BrainFuck -> C in 30 minutes.
-* Paused for a break at 12:58
-  * Had added documentation, added more sample programs, and added test-suite.
-* Started work at 15:00 again.
-  * Implemented trivial assembly language version by 15:30.
-* Spent another hour cleaning up comments, _this_ README.md file, and applying basic optimizations.
-* After that I slowly made improvements
   * Adding a lexer in [#4](https://github.com/skx/bfcc/pull/4)
-  * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6)
-  * Allow generating a breakpoint instruction when using the assembly-backend in [#7](https://github.com/skx/bfcc/pull/7).
+  * Allowing the generation of either C or assembly in [#6](https://github.com/skx/bfcc/pull/6), via the addition of a backend-abstraction.
+  * Allow generating a breakpoint instruction (`int03`) when using the assembly-backend in [#7](https://github.com/skx/bfcc/pull/7).
   * Switched to generating assembly to be compiled by `gcc` rather than `nasm` [#8](https://github.com/skx/bfcc/pull/8).
   * Added an interpreter in [#11](https://github.com/skx/bfcc/pull/12).
+
+
+
+## Test Programs
+
+There are a small collection of test-programs located beneath the [examples/](examples/) directory.
+
+Each example has a `.bf` suffix, and there is a corresponding output file for each input to show the expected output.
+
+You can run `make test` to run all the scripts, and compare their generated output with the expected result.
 
 
 
@@ -158,18 +150,10 @@ Once there inspect the registers with commands like these two:
      (gdb) print *$r8
      (gdb) info registers
 
+> **NOTE**: `r8` is the register we use for our index/memory-pointer.  So viewing that can be useful.  The contents of a memory cell can be viewed via `*$r8`.
+
 Further documentation can be found in the `gdb` manual, which is worth reading
 if you've an interest in compilers, debuggers, and decompilers.
-
-
-
-## Test Programs
-
-There are a small collection of test-programs located beneath the [examples/](examples/) directory.
-
-Each example has a `.bf` suffix, and there is a corresponding output file for each input to show the expected output.
-
-You can run `make test` to run all the scripts, and compare their generated output with the expected result.
 
 
 
