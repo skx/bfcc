@@ -12,6 +12,7 @@ Table of Contents
    * [Test Programs](#test-programs)
       * [Debugging the generated program](#debugging-the-generated-program)
    * [Future Plans?](#future-plans)
+      * [See Also](#see-also)
    * [Bug Reports?](#bug-reports)
    * [Github Setup](#github-setup)
 
@@ -165,6 +166,15 @@ if you've an interest in compilers, debuggers, and decompilers.
 Mostly none.
 
 More backends might be nice, but I guess the two existing ones are the most obvious.  Due to the way the code is structured adding a new one would be trivial.
+
+
+
+
+## See Also
+
+If you enjoyed this repository you might also enjoy my simple math-compiler, which converts postfix mathematical operations to x86-64 assembly-language:
+
+* [https://github.com/skx/math-compiler](https://github.com/skx/math-compiler)
 
 
 
