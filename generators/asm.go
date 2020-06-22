@@ -13,7 +13,7 @@ import (
 // GeneratorASM is a generator that will produce an x86-64 assembly-language
 // version of the specified input-program.
 //
-// The assembly language file will be compiled by nasm.
+// The assembly language file will be compiled by gcc.
 type GeneratorASM struct {
 
 	// input source
@@ -96,7 +96,7 @@ _start:
 		switch tok.Type {
 
 		case lexer.INC_PTR:
-			buff.WriteString(fmt.Sprintf("  add  %%r8, %d\n", tok.Repeat))
+			buff.WriteString(fmt.Sprintf("  add %%r8, %d\n", tok.Repeat))
 
 		case lexer.DEC_PTR:
 			buff.WriteString(fmt.Sprintf("  sub %%r8, %d\n", tok.Repeat))
@@ -211,7 +211,16 @@ _start:
 func (g *GeneratorASM) compileSource() error {
 
 	// Use gcc to compile our object-code
-	gcc := exec.Command("gcc", "-static", "-fPIC", "-nostdlib", "-nostartfiles", "-nodefaultlibs", "-o", g.output, g.output+".s")
+	gcc := exec.Command(
+		"gcc",
+		"-static",
+		"-fPIC",
+		"-nostdlib",
+		"-nostartfiles",
+		"-nodefaultlibs",
+		"-o", g.output,
+		g.output+".s")
+
 	gcc.Stdout = os.Stdout
 	gcc.Stderr = os.Stderr
 
@@ -239,7 +248,7 @@ func (g *GeneratorASM) compileSource() error {
 // binary to the named output-path.
 //
 // We generate a temporary file, write our assembly language file to that
-// and then compile via nasm, and link with ld.
+// and then compile via gcc.
 func (g *GeneratorASM) Generate(input string, output string) error {
 
 	//
@@ -266,7 +275,7 @@ func (g *GeneratorASM) Generate(input string, output string) error {
 
 	//
 	// Cleanup our source file?  Or leave it alone
-	// and output the name of the program we created.
+	// and output the path of the source-file we generated.
 	//
 	clean := os.Getenv("CLEANUP")
 	if clean == "1" {

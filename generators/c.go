@@ -68,12 +68,16 @@ int main (int arc, char *argv[]) {
 			buff.WriteString(fmt.Sprintf("  array[idx] -= %d;\n", tok.Repeat))
 		case lexer.OUTPUT:
 			buff.WriteString("  putchar(array[idx]);\n")
+
 		case lexer.INPUT:
 			buff.WriteString("  array[idx] = getchar();\n")
+
 		case lexer.LOOP_OPEN:
 			buff.WriteString("  while (array[idx]) {\n")
+
 		case lexer.LOOP_CLOSE:
 			buff.WriteString("}\n")
+
 		default:
 			fmt.Printf("token not handled: %v\n", tok)
 			os.Exit(1)
@@ -96,15 +100,19 @@ int main (int arc, char *argv[]) {
 // compileSource uses gcc to compile the generated source-code
 func (c *GeneratorC) compileSource() error {
 
-	gcc := exec.Command("gcc", "-static", "-O3", "-s", "-o", c.output, c.output+".c")
+	gcc := exec.Command(
+		"gcc",
+		"-static",
+		"-O3",
+		"-s",
+		"-o", c.output,
+		c.output+".c")
+
 	gcc.Stdout = os.Stdout
 	gcc.Stderr = os.Stderr
 
 	err := gcc.Run()
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // Generate takes the specified input-string and writes it as a compiled
@@ -113,6 +121,7 @@ func (c *GeneratorC) compileSource() error {
 // We generate a temporary file, write our C-source to that and then
 // compile via gcc.
 func (c *GeneratorC) Generate(input string, output string) error {
+
 	//
 	// Save the input and output path away.
 	//
@@ -137,7 +146,7 @@ func (c *GeneratorC) Generate(input string, output string) error {
 
 	//
 	// Cleanup our source file?  Or leave it alone
-	// and output the name of the program we created.
+	// and output the path of the source-file we generated.
 	//
 	clean := os.Getenv("CLEANUP")
 	if clean == "1" {

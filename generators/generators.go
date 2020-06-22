@@ -1,8 +1,8 @@
 // Package generators contains the back-ends to generate an executable
 // from an input Brainfuck source.
 //
-// We ship with two backends by default, one to compile the input program
-// to C, and one to compile via assembly language.
+// We ship with a small number of backends, and allow the user to choose
+// which is used, by name, at runtime.
 package generators
 
 import "sync"
@@ -11,7 +11,8 @@ import "sync"
 // a backend to compile our code
 type Generator interface {
 
-	// Generate the executable from the given source-file
+	// Generate an executable at the path "output", from the
+	// brainfuck source-code stored in "input".
 	Generate(input string, output string) error
 }
 
