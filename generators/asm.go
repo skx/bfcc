@@ -120,6 +120,36 @@ _start:
 		case lexer.LOOP_OPEN:
 
 			//
+			// We sneekily optimize "[-]" by converting it
+			// into "move register, 0"
+			//
+			// Since this involves looking at future-tokens
+			// we need to make sure we're not at the end of
+			// the program.
+			//
+			if offset+2 < len(program) {
+
+				//
+				// Look for the next two tokens "-]", if
+				// we find them then we're looking at "[-]"
+				// which is something we can optimize.
+				//
+				if program[offset+1].Type == lexer.DEC_CELL &&
+					program[offset+2].Type == lexer.LOOP_CLOSE {
+					// register == zero
+					buff.WriteString("  mov byte ptr [%r8], 0\n\n")
+
+					// 1. Skip this instruction,
+					// 2. the next one "-"
+					// 3. and the final one "]"
+					offset += 3
+
+					// And continue the loop again.
+					continue
+				}
+			}
+
+			//
 			// Open of a block.
 			//
 			// If the index-value is zero then jump to the

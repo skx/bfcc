@@ -79,6 +79,38 @@ int main (int arc, char *argv[]) {
 			buff.WriteString("  array[idx] = getchar();\n")
 
 		case lexer.LOOP_OPEN:
+
+			//
+			// We sneekily optimize "[-]" by converting it
+			// into an explicit setting of the cell-content
+			// to zero.
+			//
+			// Since this involves looking at future-tokens
+			// we need to make sure we're not at the end of
+			// the program.
+			//
+			if offset+2 < len(program) {
+
+				//
+				// Look for the next two tokens "-]", if
+				// we find them then we're looking at "[-]"
+				// which is something we can optimize.
+				//
+				if program[offset+1].Type == lexer.DEC_CELL &&
+					program[offset+2].Type == lexer.LOOP_CLOSE {
+					// register == zero
+					buff.WriteString("  array[idx] = 0;\n")
+
+					// 1. Skip this instruction,
+					// 2. the next one "-"
+					// 3. and the final one "]"
+					offset += 3
+
+					// And continue the loop again.
+					continue
+				}
+			}
+
 			buff.WriteString("  while (array[idx]) {\n")
 
 		case lexer.LOOP_CLOSE:
