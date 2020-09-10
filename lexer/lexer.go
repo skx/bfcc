@@ -91,6 +91,20 @@ func New(input string) *Lexer {
 	return l
 }
 
+// Tokens returns ALL tokens from the input-stream.
+func (l *Lexer) Tokens() []*Token {
+	var res []*Token
+
+	tok := l.Next()
+
+	for tok.Type != EOF {
+		res = append(res, tok)
+		tok = l.Next()
+	}
+
+	return res
+}
+
 // Next returns the next token from our input stream.
 //
 // This is pretty naive lexer because we only have to consider

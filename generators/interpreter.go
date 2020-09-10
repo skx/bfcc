@@ -148,7 +148,7 @@ func (i *Interpreter) evaluate() error {
 		i.memory[i.ptr] = int(buf[0])
 
 	case lexer.OUTPUT:
-		fmt.Printf("%s", string(i.memory[i.ptr]))
+		fmt.Printf("%c", rune(i.memory[i.ptr]))
 
 	}
 

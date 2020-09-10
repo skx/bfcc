@@ -72,9 +72,9 @@ _start:
 	l := lexer.New(g.input)
 
 	//
-	// Loop forever, processing the next token
+	// Program consists of all tokens
 	//
-	tok := l.Next()
+	program := l.Tokens()
 
 	//
 	// We keep track of the loop-labels here.
@@ -88,7 +88,13 @@ _start:
 	// We'll process the complete program until
 	// we hit an end of file/input
 	//
-	for tok.Type != lexer.EOF {
+	offset := 0
+	for offset < len(program) {
+
+		//
+		// The current token
+		//
+		tok := program[offset]
 
 		//
 		// Output different things depending on the token-type
@@ -112,6 +118,36 @@ _start:
 		case lexer.INPUT:
 			buff.WriteString("  call read_from_stdin\n")
 		case lexer.LOOP_OPEN:
+
+			//
+			// We sneekily optimize "[-]" by converting it
+			// into "move register, 0"
+			//
+			// Since this involves looking at future-tokens
+			// we need to make sure we're not at the end of
+			// the program.
+			//
+			if offset+2 < len(program) {
+
+				//
+				// Look for the next two tokens "-]", if
+				// we find them then we're looking at "[-]"
+				// which is something we can optimize.
+				//
+				if program[offset+1].Type == lexer.DEC_CELL &&
+					program[offset+2].Type == lexer.LOOP_CLOSE {
+					// register == zero
+					buff.WriteString("  mov byte ptr [%r8], 0\n\n")
+
+					// 1. Skip this instruction,
+					// 2. the next one "-"
+					// 3. and the final one "]"
+					offset += 3
+
+					// And continue the loop again.
+					continue
+				}
+			}
 
 			//
 			// Open of a block.
@@ -187,7 +223,7 @@ _start:
 		//
 		// Keep processing
 		//
-		tok = l.Next()
+		offset++
 	}
 
 	// terminate

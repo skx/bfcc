@@ -38,3 +38,8 @@ test-implementation:
 		diff examples/$${nm}.out x || ( echo "Example failed: $$i"; exit 1 ) ;\
 		echo "OK" ; \
 	done
+
+time:
+	make
+	./bfcc -backend=asm examples/mandelbrot.bf ; bash -c "time ./a.out" >/dev/null
+	./bfcc -backend=c   examples/mandelbrot.bf ; bash -c "time ./a.out" >/dev/null
