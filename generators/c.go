@@ -43,15 +43,21 @@ int main (int arc, char *argv[]) {
 	l := lexer.New(c.input)
 
 	//
-	// Loop forever, processing the next token
+	// Program consists of all tokens
 	//
-	tok := l.Next()
+	program := l.Tokens()
 
 	//
 	// We'll process the complete program until
 	// we hit an end of file/input
 	//
-	for tok.Type != lexer.EOF {
+	offset := 0
+	for offset < len(program) {
+
+		//
+		// The current token
+		//
+		tok := program[offset]
 
 		//
 		// Output different things depending on the token-type
@@ -86,7 +92,7 @@ int main (int arc, char *argv[]) {
 		//
 		// Keep processing
 		//
-		tok = l.Next()
+		offset++
 	}
 
 	// Close the main-function
