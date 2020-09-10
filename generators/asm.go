@@ -72,9 +72,9 @@ _start:
 	l := lexer.New(g.input)
 
 	//
-	// Loop forever, processing the next token
+	// Program consists of all tokens
 	//
-	tok := l.Next()
+	program := l.Tokens()
 
 	//
 	// We keep track of the loop-labels here.
@@ -88,7 +88,13 @@ _start:
 	// We'll process the complete program until
 	// we hit an end of file/input
 	//
-	for tok.Type != lexer.EOF {
+	offset := 0
+	for offset < len(program) {
+
+		//
+		// The current token
+		//
+		tok := program[offset]
 
 		//
 		// Output different things depending on the token-type
@@ -187,7 +193,7 @@ _start:
 		//
 		// Keep processing
 		//
-		tok = l.Next()
+		offset++
 	}
 
 	// terminate
