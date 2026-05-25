@@ -18,6 +18,7 @@ Table of Contents
 
 
 
+
 # BrainFuck Compiler Challenge
 
 I challenged myself to write a BrainFuck compiler, in less than a day.  This repository contains the result.  I had an initial sprint of 3-4 hours, which lead to a working system, and then spent a little longer tidying and cleaning it up.
@@ -112,7 +113,6 @@ Each example has a `.bf` suffix, and there is a corresponding output file for ea
 You can run `make test` to run all the scripts, and compare their generated output with the expected result.
 
 
-
 ### Debugging the generated program
 
 If you run the compiler with the `-debug` flag, using the assembly-language
@@ -160,13 +160,11 @@ if you've an interest in compilers, debuggers, and decompilers.
 
 
 
-
 ## Future Plans?
 
 Mostly none.
 
 More backends might be nice, but I guess the two existing ones are the most obvious.  Due to the way the code is structured adding a new one would be trivial.
-
 
 
 
@@ -176,6 +174,9 @@ If you enjoyed this repository you might also enjoy my simple math-compiler, whi
 
 * [https://github.com/skx/math-compiler](https://github.com/skx/math-compiler)
 
+Or a compiler which takes a simple language with strings, integers, and floating-point numbers and allows generation of static binaries for linux/amd64:
+
+* [https://github.com/skx/s-lang](https://github.com/skx/s-lang)
 
 
 
